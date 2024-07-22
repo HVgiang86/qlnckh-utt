@@ -1,0 +1,35 @@
+package com.example.data.core
+
+import com.example.data.di.IODispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.withContext
+import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
+
+abstract class BaseDataSource {
+    @Inject
+    lateinit var dispatchersProvider: IODispatcher
+
+    protected suspend fun <R> withResultContext(
+        context: CoroutineContext = dispatchersProvider.dispatcher(),
+        requestBlock: suspend CoroutineScope.() -> R,
+        errorBlock: (suspend CoroutineScope.(Exception) -> DataResult.Error)? = null,
+    ): DataResult<R> =
+        withContext(context) {
+            return@withContext try {
+                val response = requestBlock()
+                DataResult.Success(response)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                return@withContext errorBlock?.invoke(this, e)
+                    ?: DataResult.Error(e)
+            }
+        }
+
+    protected fun getContext() = dispatchersProvider
+
+    protected suspend fun <R> withResultContext(
+        context: CoroutineContext = dispatchersProvider.dispatcher(),
+        requestBlock: suspend CoroutineScope.() -> R,
+    ): DataResult<R> = withResultContext(context, requestBlock, null)
+}
