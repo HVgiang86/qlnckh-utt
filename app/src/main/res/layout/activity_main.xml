@@ -18,7 +18,7 @@
             android:layout_height="0dp"
             android:contentDescription="@string/app_name"
             android:foregroundGravity="center"
-            android:src="@drawable/ic_uni"
+            android:src="@drawable/ic_utt_logo_trans"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="w,1"
             app:layout_constraintEnd_toEndOf="parent"

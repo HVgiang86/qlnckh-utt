@@ -6,43 +6,31 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.example.mvvm.constants.TokenStoreKey
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import javax.inject.Inject
 
-val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = com.example.mvvm.constants.TokenStoreKey.PREFS_NAME)
-private val TOKEN_KEY = stringPreferencesKey(com.example.mvvm.constants.TokenStoreKey.KEY_TOKEN)
+val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = TokenStoreKey.PREFS_NAME)
+private val TOKEN_KEY = stringPreferencesKey(TokenStoreKey.KEY_TOKEN)
 
-class TokenStoreApiImpl(private val context: Context) : TokenStoreApi {
+class TokenStoreApiImpl @Inject constructor(private val context: Context) : TokenStoreApi {
+
+    private val sharedPreferences = context.getSharedPreferences(TokenStoreKey.PREFS_NAME, Context.MODE_PRIVATE)
     override fun getToken(): String? {
-        var token: String? = null
-        runBlocking {
-            val flow = context.dataStore.data.map {
-                it[TOKEN_KEY]
-            }
-
-            token = flow.last()
-        }
-
+        val token = sharedPreferences.getString(TokenStoreKey.KEY_TOKEN, null)
         return token
     }
 
     override fun saveToken(token: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            context.dataStore.edit {
-                it[TOKEN_KEY] = token
-            }
-        }
+        sharedPreferences.edit().putString(TokenStoreKey.KEY_TOKEN, token).apply()
     }
 
     override fun clearToken() {
-        CoroutineScope(Dispatchers.IO).launch {
-            context.dataStore.edit {
-                it.remove(TOKEN_KEY)
-            }
-        }
+        sharedPreferences.edit().remove(TokenStoreKey.KEY_TOKEN).apply()
     }
 }

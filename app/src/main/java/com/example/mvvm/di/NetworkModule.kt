@@ -21,7 +21,6 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideTokenInterceptor(tokenRepository: TokenRepository): Interceptor {
-        println("Request provideTokenInterceptor $tokenRepository")
         return InterceptorImpl(tokenRepository)
     }
 
@@ -34,17 +33,17 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideApiService(
+        tokenRepository: TokenRepository,
         gson: Gson,
     ): MyApi {
         val logging1 = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
         val logging = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS)
-//        println("NetworkModule.provideApiService $tokenInterceptor")
+        val tokenInterceptor = InterceptorImpl(tokenRepository)
         return ServiceGenerator.generate(
             BASE_URL,
             MyApi::class.java,
             gson,
-//            listOf(tokenInterceptor, logging),
-            listOf(logging, logging1),
+            listOf(tokenInterceptor, logging, logging1),
         )
     }
 }

@@ -41,7 +41,7 @@ abstract class BaseFragment<viewBinding : ViewBinding, viewModel : BaseViewModel
         lifecycleScope.launch {
             viewModel.run {
                 isLoading.collect {
-                    if (it) showLoading() else hideLoading()
+                    if (it) this@BaseFragment.showLoading() else this@BaseFragment.hideLoading()
                 }
             }
         }

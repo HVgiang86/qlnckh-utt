@@ -8,6 +8,7 @@ import com.example.mvvm.domain.AppState
 import com.example.mvvm.domain.UserRole
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.onCompletion
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -23,9 +24,10 @@ class AuthViewModel
 
         fun signIn(userName: String, password: String) {
             runFlow(Dispatchers.IO) {
-                userRepository.login(userName, password).collect {
+                userRepository.login(userName, password).onCompletion { hideLoading() }.collect {
                     Timber.d("collect $it")
-                    tokenRepository.saveToken(it.token)
+                    tokenRepository.clearToken()
+                    tokenRepository.saveToken(it.result.token)
                     _loginSuccess.postValue(true)
                 }
             }
@@ -33,7 +35,7 @@ class AuthViewModel
 
         fun getProfile() {
             runFlow(Dispatchers.IO) {
-                userRepository.getMyProfile().collect {
+                userRepository.getMyProfile().onCompletion { hideLoading() }.collect {
                     Timber.d("Get my profile collect $it")
 
                     if (it.isResearcher()) {

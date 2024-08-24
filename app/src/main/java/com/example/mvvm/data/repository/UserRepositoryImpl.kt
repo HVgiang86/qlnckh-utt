@@ -22,6 +22,6 @@ class UserRepositoryImpl
         }
 
         override suspend fun getMyProfile() = runFlow {
-            remote.getMyProfile()
+            remote.getMyProfile().map { it.profile }
         }
     }

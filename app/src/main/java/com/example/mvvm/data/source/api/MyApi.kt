@@ -7,6 +7,7 @@ import com.example.mvvm.data.source.api.model.response.GetProfileResponse
 import com.example.mvvm.data.source.api.model.response.LoginResponse
 import com.example.mvvm.domain.Researcher
 import com.example.mvvm.domain.Supervisor
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -25,8 +26,8 @@ interface MyApi {
     @POST("auth/login")
     suspend fun login(
         @Body login: LoginRequest,
-    ): LoginResponse
+    ): Response<LoginResponse>
 
     @GET("users/profile")
-    suspend fun getMyProfile(): GetProfileResponse
+    suspend fun getMyProfile(): Response<GetProfileResponse>
 }

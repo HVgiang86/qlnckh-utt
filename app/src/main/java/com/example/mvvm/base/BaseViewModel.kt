@@ -42,7 +42,7 @@ open class BaseViewModel : ViewModel() {
     }
 
     private var exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        showLoading()
+        hideLoading()
         // show message
         println("BaseViewModel exceptionHandler: ${throwable.message}")
         handleMessage(
@@ -70,7 +70,7 @@ open class BaseViewModel : ViewModel() {
         job = viewModelScope.launch(context + exceptionHandler) {
             showLoading()
             block.invoke()
-            showLoading()
+            hideLoading()
         }
     }
 }
