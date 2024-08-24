@@ -3,8 +3,6 @@ package com.example.mvvm.base
 import com.example.mvvm.utils.widget.AlertDialog
 
 interface BaseView {
-    fun showLoading(isShow: Boolean)
-
     fun showLoading()
 
     fun hideLoading()
@@ -13,9 +11,4 @@ interface BaseView {
 
     fun hideAlertPopup()
 
-    fun showPopupImage(
-        content: String = "",
-        titleButton: String = "",
-        completion: () -> Unit,
-    )
 }

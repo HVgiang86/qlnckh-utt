@@ -6,4 +6,56 @@
     <color name="colorPrimaryDark">#FF8B94</color>
     <color name="colorGray100">#EEEEEE</color>
     <color name="colorTextDark">#212121</color>
+
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="primary">#24BAEC</color>
+    <color name="dark_primary">#1DA8D6</color>
+    <color name="action_color">#FF7029</color>
+    <color name="light_primary">#CAEAFF</color>
+    <color name="dark_frame">#16181F</color>
+    <color name="dark_shape">#20232D</color>
+    <color name="text_dark_color">#1B1E28</color>
+    <color name="gray_subtext_color">#7D848D</color>
+    <color name="line_stroke_color">#F8F9FA</color>
+    <color name="selection_card_bg">#FFFFFF</color>
+    <color name="onclick_selection_card_bg">#BFBCBC</color>
+    <color name="light_pink">#FFDFE6</color>
+    <color name="greeting_card_color">#ECECF8</color>
+    <color name="transparent">#00000000</color>
+    <color name="transparent1">#50000000</color>
+    <color name="blur_gray">#99F5EEEE</color>
+    <color name="card_gray">#EDE9E9</color>
+    <color name="background">#F2F4F5</color>
+    <color name="card">#E8E8E8</color>
+    <color name="divider">#D9D9D9</color>
+
+    <color name="blue_dark">#2196F3</color>
+    <color name="blue_light">#03A9F4</color>
+
+    <color name="yellow_light">#deea98</color>
+    <color name="yellow_light_2">#fafcef</color>
+
+    <color name="propose_tag">#D6E0E1</color>
+    <color name="pending_tag">#79C7FF</color>
+    <color name="inprogress_tag">#E2DB34</color>
+    <color name="new_tag">#30F38A</color>
+    <color name="under_review_tag">#8B34E2</color>
+    <color name="complete_tag">#FC8CD6</color>
+    <color name="pause_tag">#526568</color>
+    <color name="cancel_tag">#E23434</color>
+
+    <color name="colorTextLight">#757575</color> <!-- grey-600 -->
+    <color name="colorGrey500">#9E9E9E</color> <!-- grey-500 -->
+    <color name="color_dialog_date">#FFFFFF</color>
+    <color name="colorGreyC4">#C4C4C4</color>
+    <color name="colorGreyRBG74">#4A4A4A</color> <!-- grey-RBG(74,74,74) -->
+    <color name="colorGreyRBG75">#757575</color>
+    <color name="colorGrey400">#BDBDBD</color>
+    <color name="color_616161">#616161</color>
+    <color name="color_337AB7">#337AB7</color>
+    <color name="color_777777">#777777</color>
 </resources>

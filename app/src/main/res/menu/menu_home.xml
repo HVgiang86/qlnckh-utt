@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/projectList"
+        android:icon="@drawable/ic_project"
+        android:title="Projects"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/inCharge"
+        android:icon="@drawable/ic_in_charge"
+        android:title="In Charge" />
+
+    <item
+        android:id="@+id/history"
+        android:icon="@drawable/ic_history"
+        android:title="History" />
+
+    <item
+        android:id="@+id/profile"
+        android:icon="@drawable/ic_profile"
+        android:title="Profile" />
+
+</menu>

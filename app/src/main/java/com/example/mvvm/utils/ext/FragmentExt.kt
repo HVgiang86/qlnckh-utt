@@ -44,6 +44,17 @@ fun Fragment.addFragment(
     }, animateType)
 }
 
+fun Fragment.goBackFragment(): Boolean {
+    activity?.supportFragmentManager?.notNull {
+        val isShowPreviousPage = it.backStackEntryCount > 0
+        if (isShowPreviousPage) {
+            it.popBackStackImmediate()
+        }
+        return isShowPreviousPage
+    }
+    return false
+}
+
 fun Fragment.addChildFragment(
     @IdRes containerId: Int,
     fragment: Fragment,
@@ -59,15 +70,18 @@ fun Fragment.addChildFragment(
     }, animateType)
 }
 
-fun Fragment.goBackFragment(): Boolean {
-    activity?.supportFragmentManager?.notNull {
-        val isShowPreviousPage = it.backStackEntryCount > 0
-        if (isShowPreviousPage) {
-            it.popBackStackImmediate()
-        }
-        return isShowPreviousPage
+fun Fragment.addClearBackStackFragment(
+    @IdRes containerId: Int,
+    fragment: Fragment,
+    tag: String = fragment::class.java.simpleName,
+    animateType: AnimateType = AnimateType.FADE,
+) {
+    activity?.supportFragmentManager?.apply {
+        popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        transact({
+            replace(containerId, fragment, tag)
+        }, animateType)
     }
-    return false
 }
 
 fun Fragment.showChildFragment(

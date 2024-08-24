@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:contentPadding="@dimen/dp_8"
+    app:cardUseCompatPadding="true"
+    app:cardCornerRadius="@dimen/dp_16"
+    app:cardElevation="@dimen/dp_2"
+    android:layout_marginStart="@dimen/dp_minus8"
+    android:layout_marginEnd="@dimen/dp_minus8"
+    android:background="@color/card">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textReportTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:ellipsize="end"
+                tools:text="Report lan thu nhat"
+                android:textSize="@dimen/sp_16"
+                android:textStyle="bold"
+                />
+
+            <TextView
+                android:id="@+id/textReportDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/sp_16"
+                android:layout_marginStart="@dimen/dp_16"
+                tools:text="19/04/2023"
+                />
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/divider1"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_1"
+            android:background="@color/divider"
+            android:layout_marginTop="@dimen/dp_8"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textReporter"
+            tools:text="Hoang Van Giang"
+            android:layout_marginTop="@dimen/dp_16"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textFileName"
+            android:focusable="true"
+            tools:text="file_report.pdf"
+            android:clickable="true"
+            android:layout_marginTop="@dimen/dp_16"/>
+
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_1"
+            android:background="@color/divider"
+            android:layout_marginTop="@dimen/dp_8"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textReportContent"
+            tools:text="@string/text_long_holder"
+            android:layout_marginTop="@dimen/dp_16"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:listitem="@layout/item_supervisor_comment"
+            tools:itemCount="1"
+            android:layout_marginTop="@dimen/dp_16"
+            />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_button"
+            android:text="New comment"
+            android:layout_marginTop="@dimen/dp_16"
+            android:layout_marginBottom="@dimen/dp_16"
+            />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

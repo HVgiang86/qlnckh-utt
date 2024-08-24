@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:padding="@dimen/dp_20"
+    tools:context=".views.auth.ExtendRegisterFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layoutTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp">
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_back"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvToolbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="Register"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/imageView2"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/TextLabel_Normal_With_ClearTextIcon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:textSize="@dimen/sp_16">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edtStudentCode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Mã sinh viên"
+            android:imeOptions="actionGo"
+            android:inputType="text"
+            android:nextFocusDown="@id/edtEmail"
+            android:singleLine="true" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/TextLabel_Normal_With_ClearTextIcon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_20"
+        android:textSize="@dimen/sp_16">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edtClass"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Lớp"
+            android:imeOptions="actionGo"
+            android:inputType="text"
+            android:nextFocusDown="@id/edtEmail"
+            android:singleLine="true" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/TextLabel_Normal_With_ClearTextIcon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_20"
+        android:textSize="@dimen/sp_16">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edtKhoa"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:hint="Khoa"
+            android:imeOptions="actionGo"
+            android:inputType="text"
+            android:nextFocusDown="@id/edtEmail"
+            android:singleLine="true" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/btnSignUp"
+        style="@style/BaseButton"
+        android:layout_marginTop="@dimen/dp_20"
+        android:text="@string/sign_up" />
+
+</LinearLayout>

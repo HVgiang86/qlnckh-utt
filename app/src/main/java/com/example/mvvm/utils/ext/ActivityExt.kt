@@ -1,11 +1,14 @@
 package com.example.mvvm.utils.ext
 
+import android.app.Activity
 import android.content.Intent
 import androidx.annotation.IdRes
 import androidx.annotation.NonNull
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.example.mvvm.R
+import com.example.mvvm.base.BaseActivity
 import com.example.mvvm.constants.AnimateType
 
 fun AppCompatActivity.replaceFragmentInActivity(
@@ -44,6 +47,18 @@ fun AppCompatActivity.goBackFragment(): Boolean {
         supportFragmentManager.popBackStackImmediate()
     }
     return isShowPreviousPage
+}
+
+fun AppCompatActivity.addClearBackStackFragment(
+    @IdRes containerId: Int,
+    fragment: Fragment,
+    tag: String = fragment::class.java.simpleName,
+    animateType: AnimateType = AnimateType.FADE,
+) {
+    supportFragmentManager.transact({
+        supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        replace(containerId, fragment, tag)
+    }, animateType)
 }
 
 fun AppCompatActivity.startActivity(
@@ -114,6 +129,30 @@ fun AppCompatActivity.removeFragment(
 
 fun AppCompatActivity.clearAllFragment() {
     repeat((0..supportFragmentManager.backStackEntryCount).count()) { supportFragmentManager.popBackStack() }
+}
+
+fun Activity.showPopupError(
+    title: String = "Thông báo",
+    content: String,
+    textButton: String = getString(R.string.ok),
+    completion: () -> Unit = {},
+    onClickOk: (() -> Unit)? = null,
+) {
+    (this as BaseActivity<*, *>).showAlertPopup {
+        setCancelable()
+        title(title)
+        message(content)
+        midButton(textButton) {
+            if (textButton == "Đồng ý") {
+                dismiss()
+                completion()
+            }
+            if (textButton == getString(R.string.ok)) {
+                dismiss()
+                onClickOk?.invoke()
+            }
+        }
+    }
 }
 
 // fun Application.getContext(): Context {

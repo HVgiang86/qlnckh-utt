@@ -10,11 +10,9 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        jcenter()
         maven("https://www.jitpack.io")
     }
 }
 
 include(":app", ":data")
-rootProject.name = "My MVVM Template"
-include(":view")
+rootProject.name = "QLNCKH UTT"

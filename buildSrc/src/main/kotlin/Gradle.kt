@@ -211,6 +211,8 @@ object Deps {
     const val dataStoreProto = "androidx.datastore:datastore:${Versions.dataStoreProto}"
 
     const val timber = "com.jakewharton.timber:timber:${Versions.timber}"
+
+    const val toasty = "com.github.GrenderG:Toasty:${Versions.toasty}"
 }
 
 object Configuration {

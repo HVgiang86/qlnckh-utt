@@ -1,19 +1,27 @@
 package com.example.mvvm.base
 
-import com.example.mvvm.utils.ext.isNull
-import com.example.mvvm.utils.ext.notNull
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import retrofit2.HttpException
-import java.io.IOException
-import java.net.HttpURLConnection
+import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 
-class BaseViewModel {
+open class BaseViewModel : ViewModel() {
+
+    var job: Job? = null
+
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
-    private val _errorResponse = MutableStateFlow<String?>(null)
-    val errorResponse = _errorResponse.asStateFlow()
+
+    private val _responseMessage = MutableSharedFlow<ResponseMessage>()
+    val responseMessage: SharedFlow<ResponseMessage> = _responseMessage
+
     private val _exception = MutableStateFlow<Throwable?>(null)
     val exception = _exception.asStateFlow()
 
@@ -33,34 +41,36 @@ class BaseViewModel {
         _exception.value = exception
     }
 
-    fun <S : ErrorMessage> convertToRetrofitException(throwable: Throwable): RetrofitException {
-        when (throwable) {
-            is RetrofitException -> return throwable
-            is IOException -> return RetrofitException.toNetworkError(throwable)
-            is HttpException -> {
-                throwable.response()
-                val response = throwable.response()
-                if (response == null || response.code() == HttpURLConnection.HTTP_BAD_GATEWAY) {
-                    return RetrofitException.toUnexpectedError(throwable)
-                }
+    private var exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        showLoading()
+        // show message
+        println("BaseViewModel exceptionHandler: ${throwable.message}")
+        handleMessage(
+            message = throwable.message ?: AppConstants.DEFAULT_MESSAGE_ERROR,
+            bgType = BGType.BG_TYPE_ERROR,
+        )
+        _exception.update { throwable }
+    }
 
-                response.errorBody().isNull {
-                    return RetrofitException.toServerError(response)
-                }
-
-                response.errorBody()?.notNull {
-                    return when (response.code()) {
-                        HttpURLConnection.HTTP_INTERNAL_ERROR -> {
-                            RetrofitException.toServerError(response)
-                        }
-
-                        else -> {
-                            RetrofitException.toHttpError(response)
-                        }
-                    }
-                }
-            }
+    private fun handleMessage(message: String, bgType: BGType) {
+        viewModelScope.launch {
+            _responseMessage.emit(
+                ResponseMessage(
+                    message = message,
+                    bgType = bgType,
+                ),
+            )
         }
-        return RetrofitException.toUnexpectedError(throwable)
+    }
+
+    fun runFlow(
+        context: CoroutineContext,
+        block: suspend () -> Unit,
+    ) {
+        job = viewModelScope.launch(context + exceptionHandler) {
+            showLoading()
+            block.invoke()
+            showLoading()
+        }
     }
 }

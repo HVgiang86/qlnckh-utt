@@ -12,6 +12,7 @@ plugins {
     id(Plugins.dagger_hilt)
     kotlin(Plugins.kotlinApt)
     id(Plugins.ksp)
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -95,7 +96,6 @@ tasks {
 
 dependencies {
     implementation(project(":data"))
-    implementation(project(":view"))
 
     implementation(Deps.support_core_ktx)
     implementation(Deps.support_app_compat)
@@ -105,6 +105,10 @@ dependencies {
 
     implementation(Deps.swiperefreshlayout)
     implementation(Deps.glide_runtime)
+    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("com.google.android.material:material:1.12.0")
+    implementation("androidx.activity:activity:1.9.1")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
     ksp(Deps.glide_compiler)
     implementation(Deps.dexter) // Permission
@@ -137,4 +141,21 @@ dependencies {
     implementation(Deps.okhttp_logging_interceptor)
 
     implementation(Deps.timber)
+
+    implementation(Deps.toasty)
+
+    // Firebase
+    implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
+    implementation("com.google.firebase:firebase-storage")
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-database:21.0.0")
+
+    // DataStore
+    implementation(Deps.dataStorePreference)
+
+    // Json
+    implementation(Deps.okHttp)
+    implementation(Deps.retrofit_runtime) {
+        exclude(module = "okhttp")
+    }
 }

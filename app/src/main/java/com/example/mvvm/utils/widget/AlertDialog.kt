@@ -9,6 +9,7 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import com.example.mvvm.databinding.CustomAlertDialogViewBinding
+import com.example.mvvm.utils.ext.setOnUnMultiClickListener
 
 class AlertDialog(private val context: Context) {
     private val dialogView by lazy {
