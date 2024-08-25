@@ -11,6 +11,7 @@ import com.example.mvvm.data.source.api.model.response.ProfileResponse
 import com.example.mvvm.domain.GetListResearcherSupervisorResponse
 import com.example.mvvm.domain.ProjectResponse
 import com.example.mvvm.domain.Researcher
+import com.example.mvvm.domain.ResearcherSupervisor
 import com.example.mvvm.domain.Supervisor
 import retrofit2.Response
 import retrofit2.http.Body
@@ -80,5 +81,5 @@ interface MyApi {
     @GET("users/{type}")
     suspend fun getResearchSupervisor(
         @Path("type") type: String,
-    ): GetListResearcherSupervisorResponse
+    ): Map<String, List<ResearcherSupervisor>>
 }

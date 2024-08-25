@@ -8,6 +8,7 @@ import com.example.mvvm.base.BaseFragment
 import com.example.mvvm.data.source.api.model.response.ProfileResponse
 import com.example.mvvm.databinding.FragmentHistoryBinding
 import com.example.mvvm.domain.Project
+import com.example.mvvm.domain.ResearcherSupervisor
 import com.example.mvvm.domain.Role
 import com.example.mvvm.utils.ext.gone
 import com.example.mvvm.utils.ext.visible
@@ -21,9 +22,27 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding, HistoryViewModel>()
     private val adapter: ProjectListAdapter by lazy { ProjectListAdapter() }
     private lateinit var profileResponse: ProfileResponse
 
+    private lateinit var researcherAdapter: ResearcherSupervisorAdapter
+    private lateinit var supervisorAdapter: ResearcherSupervisorAdapter
+
+    private lateinit var researcherList: MutableList<ResearcherSupervisor>
+    private lateinit var supervisorList: MutableList<ResearcherSupervisor>
+
     private fun init() {
         viewBinding.listProject.adapter = adapter
         viewBinding.listProject.layoutManager = LinearLayoutManager(requireContext())
+
+        researcherList = mutableListOf()
+        supervisorList = mutableListOf()
+
+        researcherAdapter = ResearcherSupervisorAdapter(researcherList)
+        supervisorAdapter = ResearcherSupervisorAdapter(supervisorList)
+
+        viewBinding.revResearcher.adapter = researcherAdapter
+        viewBinding.revResearcher.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        viewBinding.revSupervisor.adapter = supervisorAdapter
+        viewBinding.revSupervisor.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+
     }
 
     private fun initData() {
@@ -52,6 +71,7 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding, HistoryViewModel>()
                 viewBinding.topAppBar.title = getString(R.string.title_admin)
                 viewBinding.containerNoInCharge.gone()
                 viewBinding.containerHasInCharge.gone()
+                viewBinding.containerResearcherSupervisor.visible()
 
                 viewModel.getListResearcherSupervisor(Role.RESEARCHER.value)
                 viewModel.getListResearcherSupervisor(Role.SUPERVISOR.value)
@@ -72,12 +92,22 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding, HistoryViewModel>()
             }
         }
 
-        viewModel.getListResearch.observe(viewLifecycleOwner) {
-            val a = it
+        viewModel.getListResearch.observe(viewLifecycleOwner) { res ->
+            try {
+                val data = res["successfully"]
+                if(!data.isNullOrEmpty()) researcherAdapter.updateData(data as MutableList<ResearcherSupervisor>)
+            }catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
 
-        viewModel.getListSupervisor.observe(viewLifecycleOwner) {
-            val a = it
+        viewModel.getListSupervisor.observe(viewLifecycleOwner) { res ->
+            try {
+                val data = res["successfully"]
+                if(!data.isNullOrEmpty()) supervisorAdapter.updateData(data as MutableList<ResearcherSupervisor>)
+            }catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 

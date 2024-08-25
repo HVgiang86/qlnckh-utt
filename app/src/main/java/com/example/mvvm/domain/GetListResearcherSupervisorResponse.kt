@@ -1,22 +1,38 @@
 package com.example.mvvm.domain
 
+import com.google.gson.annotations.Expose
+
 data class GetListResearcherSupervisorResponse(
-    val successfully: List<ResearcherSupervisor>
+    val successfully: Map<String, List<ResearcherSupervisor>>
 )
 
 data class ResearcherSupervisor(
-    val fullName: String? = null,
-    val email: String? = null,
-    val faculty: String? = null,
-    val department: String? = null,
-    val title: String? = null,
-    val avatar: String? = null,
-    val major: String? = null,
-    val className: String? = null,
-    val dateOfBirth: String? = null,
-    val description: String? = null,
-    val phoneNumber: String? = null,
-    val role: String? = null,
-    val status: Boolean? = null,
-    val id: Long? = null
+    @Expose
+    val fullName: String,
+    @Expose
+    val email: String,
+    @Expose
+    val faculty: Any? = null,
+    @Expose
+    val department: Any? = null,
+    @Expose
+    val title: Any? = null,
+    @Expose
+    val avatar: Any? = null,
+    @Expose
+    val major: Any? = null,
+    @Expose
+    val className: Any? = null,
+    @Expose
+    val dateOfBirth: String,
+    @Expose
+    val description: String,
+    @Expose
+    val phoneNumber: String,
+    @Expose
+    val role: String,
+    @Expose
+    val status: Boolean,
+    @Expose
+    val id: Long
 )

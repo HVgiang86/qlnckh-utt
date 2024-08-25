@@ -36,11 +36,11 @@ class HistoryViewModel
         private val _profile = MutableLiveData<ProfileResponse>()
         val profile: LiveData<ProfileResponse> = _profile
 
-        private val _getListResearch = MutableLiveData<GetListResearcherSupervisorResponse>()
-        val getListResearch: LiveData<GetListResearcherSupervisorResponse> = _getListResearch
+        private val _getListResearch = MutableLiveData<Map<String, List<ResearcherSupervisor>>>()
+        val getListResearch: LiveData<Map<String, List<ResearcherSupervisor>>> = _getListResearch
 
-        private val _getListSupervisor = MutableLiveData<GetListResearcherSupervisorResponse>()
-        val getListSupervisor: LiveData<GetListResearcherSupervisorResponse> = _getListSupervisor
+        private val _getListSupervisor = MutableLiveData<Map<String, List<ResearcherSupervisor>>>()
+        val getListSupervisor: LiveData<Map<String, List<ResearcherSupervisor>>> = _getListSupervisor
 
         fun getHistory() {
             runFlow(Dispatchers.IO) {
