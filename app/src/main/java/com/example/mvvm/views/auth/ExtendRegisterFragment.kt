@@ -90,7 +90,7 @@ class ExtendRegisterFragment : BaseFragment<FragmentExtendRegisterBinding, AuthV
 
     override fun inflateViewBinding(inflater: LayoutInflater) = FragmentExtendRegisterBinding.inflate(inflater)
     override fun initialize() {
-        registerLiveData()
+        registerErrorHandler()
 
         arguments?.takeIf { it.containsKey(ARG_REGISTER_INFO) }?.let {
             registerInfo = it.getSerializable(ARG_REGISTER_INFO) as RegisterInfo

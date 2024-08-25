@@ -37,7 +37,7 @@ abstract class BaseFragment<viewBinding : ViewBinding, viewModel : BaseViewModel
         DialogManagerImpl(getContext())
     }
 
-    open fun registerLiveData() {
+    open fun registerErrorHandler() {
         lifecycleScope.launch {
             viewModel.run {
                 isLoading.collect {

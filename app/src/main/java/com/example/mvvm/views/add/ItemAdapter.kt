@@ -29,6 +29,18 @@ class ItemAdapter(
         notifyDataSetChanged()
     }
 
+    fun setItemSingleList(newItems: Item?, title: String) {
+        items.clear()
+        if (newItems != null) {
+            items.add(newItems)
+        }
+        items.add(0, Item.TitleItem(title))
+        if (items.size == 1) {
+            items.add(Item.AddItem)
+        }
+        notifyDataSetChanged()
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<ViewBinding> {
         return when (viewType) {
             TYPE_TITLE -> {
@@ -119,5 +131,5 @@ sealed class Item(val content: String) {
     data class SuperVisorItem(val supervisor: Supervisor) : Item(supervisor.name.toString())
     data class ResearcherItem(val researcher: Researcher) : Item(researcher.name.toString())
     data class TitleItem(val title: String) : Item(title)
-    data object AddItem : Item("Add")
+    data object AddItem : Item("Thêm")
 }

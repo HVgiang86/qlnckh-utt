@@ -44,10 +44,14 @@ class AuthViewModel
                     _userRole.postValue(UserRole.RESEARCHER)
                     val user = it.getResearcher()
                     AppState.userId = user.id
+                    AppState.name = user.name.toString()
+                    AppState.email = user.email.toString()
                 } else if (it.isSupervisor()) {
                     _userRole.postValue(UserRole.SUPERVISOR)
                     val user = it.getSupervisor()
                     AppState.userId = user.id
+                    AppState.name = user.name.toString()
+                    AppState.email = user.email.toString()
                 } else {
                     _userRole.postValue(UserRole.ADMIN)
                 }

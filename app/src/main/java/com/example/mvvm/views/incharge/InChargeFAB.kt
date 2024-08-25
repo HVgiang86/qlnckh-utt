@@ -5,12 +5,7 @@ import com.example.mvvm.domain.ProjectState
 import com.example.mvvm.domain.UserRole
 
 enum class InChargeFAB {
-    NEW_REPORT,
-    PAUSE,
-    RESUME,
-    CANCEL,
-    REVIEW,
-    MARK_FINISH,
+    NEW_REPORT, PAUSE, RESUME, CANCEL, REVIEW, MARK_FINISH,
 }
 
 fun getInChargeFAB(state: ProjectState, role: UserRole): InChargeFAB? {
@@ -55,7 +50,7 @@ fun getInChargeFAB(state: ProjectState, role: UserRole): InChargeFAB? {
             return null
         }
 
-        ProjectState.CANCELLED -> {
+        ProjectState.CANCEL -> {
             return null
         }
 

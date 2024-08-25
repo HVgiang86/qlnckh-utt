@@ -9,6 +9,7 @@ import com.example.mvvm.base.BaseFragment
 import com.example.mvvm.databinding.FragmentProjectBinding
 import com.example.mvvm.domain.AppState
 import com.example.mvvm.domain.Project
+import com.example.mvvm.domain.UserRole
 import com.example.mvvm.utils.ext.addFragment
 import com.example.mvvm.utils.ext.gone
 import com.example.mvvm.utils.ext.visible
@@ -31,7 +32,13 @@ class ProjectListFragment : BaseFragment<FragmentProjectBinding, ProjectListView
         adapter.setData(data)
 
         val fabType = getProjectListFAB(AppState.userRole)
-        viewBinding.fab.show()
+
+        if (AppState.hasInChargeProject && AppState.userRole == UserRole.RESEARCHER) {
+            viewBinding.fab.gone()
+        } else {
+            viewBinding.fab.visible()
+        }
+
         when (fabType) {
             ProjectListFAB.NEW -> {
                 viewBinding.fab.text = "Thêm"
@@ -54,7 +61,7 @@ class ProjectListFragment : BaseFragment<FragmentProjectBinding, ProjectListView
 
     override fun inflateViewBinding(inflater: LayoutInflater) = FragmentProjectBinding.inflate(inflater)
     override fun initialize() {
-        registerLiveData()
+        registerErrorHandler()
         lifecycleScope.launch {
             viewModel.isLoading.collect {
                 if (it) {

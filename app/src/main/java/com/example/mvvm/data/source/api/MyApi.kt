@@ -2,6 +2,8 @@ package com.example.mvvm.data.source.api
 
 import com.example.mvvm.data.source.api.model.request.CouncilRequest
 import com.example.mvvm.data.source.api.model.request.LoginRequest
+import com.example.mvvm.data.source.api.model.request.NewProjectRequest
+import com.example.mvvm.data.source.api.model.request.NewReportRequest
 import com.example.mvvm.data.source.api.model.request.ResearcherReg
 import com.example.mvvm.data.source.api.model.request.SupervisorReg
 import com.example.mvvm.data.source.api.model.request.UpdateProfileRequest
@@ -11,7 +13,6 @@ import com.example.mvvm.data.source.api.model.response.ProfileResponse
 import com.example.mvvm.domain.GetListResearcherSupervisorResponse
 import com.example.mvvm.domain.ProjectResponse
 import com.example.mvvm.domain.Researcher
-import com.example.mvvm.domain.ResearcherSupervisor
 import com.example.mvvm.domain.Supervisor
 import retrofit2.Response
 import retrofit2.http.Body
@@ -40,8 +41,20 @@ interface MyApi {
     @GET("users/profile")
     suspend fun getMyProfile(): Response<BaseResponse<ProfileResponse>>
 
+    @GET("users/supervisor")
+    suspend fun getAllSupervisor(): Response<BaseResponse<List<Supervisor>>>
+
     @GET("topics")
     suspend fun getAllProject(): Response<List<ProjectResponse>>
+
+    @POST("topics")
+    suspend fun addProject(@Body body: NewProjectRequest): Response<BaseResponse<ProjectResponse>>
+
+    @POST("topics/{topicId}/{researcherEmail}")
+    suspend fun addProject(@Path("topicId") topicId: Long, @Path("researcherEmail") researcherEmail: String): Response<BaseResponse<ProfileResponse>>
+
+    @POST("reports/topic/{topicId}")
+    suspend fun addReport(@Body body: NewReportRequest, @Path("topicId") topicId: Long): Response<Any>
 
     @PUT("put/{email}")
     suspend fun updateProfile(
@@ -87,4 +100,24 @@ interface MyApi {
     suspend fun deleteResearchSupervisor(
         @Path("mail") mail: String,
     ): Unit
+
+    @POST("topics/set-approve/{topicId}")
+    suspend fun setApprove(
+        @Path("topicId") topicId: Long,
+    ): Response<BaseResponse<ProjectResponse>>
+
+    @POST("topics/set-under-review/{topicId}")
+    suspend fun setUnderReview(
+        @Path("topicId") topicId: Long,
+    ): Response<BaseResponse<ProjectResponse>>
+
+    @POST("topics/set-pause-or-resume/{topicId}")
+    suspend fun setPauseOrResume(
+        @Path("topicId") topicId: Long,
+    ): Response<BaseResponse<ProjectResponse>>
+
+    @POST("topics/set-cancel/{topicId}")
+    suspend fun setCancel(
+        @Path("topicId") topicId: Long,
+    ): Response<BaseResponse<ProjectResponse>>
 }

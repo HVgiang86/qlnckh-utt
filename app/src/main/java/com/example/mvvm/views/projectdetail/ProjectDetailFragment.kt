@@ -14,15 +14,12 @@ import com.example.mvvm.base.BaseFragment
 import com.example.mvvm.databinding.FragmentProjectDetailBinding
 import com.example.mvvm.domain.AppState
 import com.example.mvvm.domain.Project
-import com.example.mvvm.domain.UserRole
 import com.example.mvvm.utils.ext.addFragment
 import com.example.mvvm.utils.ext.getStateName
 import com.example.mvvm.utils.ext.getStateTagBackground
 import com.example.mvvm.utils.ext.goBackFragment
 import com.example.mvvm.utils.ext.gone
 import com.example.mvvm.views.assign.AssignFragment
-import com.example.mvvm.views.assign.Item
-import com.example.mvvm.views.incharge.InChargeFAB
 import com.example.mvvm.views.incharge.ProjectFAB
 import com.example.mvvm.views.incharge.adapter.DocumentAdapter
 import com.example.mvvm.views.incharge.getBackgroundColor
@@ -43,7 +40,7 @@ class ProjectDetailFragment : BaseFragment<FragmentProjectDetailBinding, Project
     }
 
     override fun initialize() {
-        registerLiveData()
+        registerErrorHandler()
         project = arguments?.let {
             it.getSerializable(KEY_PROJECT) as Project
         }

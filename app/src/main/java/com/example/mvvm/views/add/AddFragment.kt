@@ -14,16 +14,16 @@ import com.example.mvvm.R
 import com.example.mvvm.base.BGType
 import com.example.mvvm.base.BaseFragment
 import com.example.mvvm.databinding.FragmentAddBinding
-import com.example.mvvm.domain.AppState
 import com.example.mvvm.domain.Document
 import com.example.mvvm.domain.Project
 import com.example.mvvm.domain.ProjectState
-import com.example.mvvm.domain.Researcher
 import com.example.mvvm.domain.ResearcherReport
+import com.example.mvvm.domain.Supervisor
 import com.example.mvvm.utils.ext.genId
 import com.example.mvvm.utils.ext.gone
 import com.example.mvvm.utils.ext.visible
 import com.example.mvvm.utils.formatDateToDDMMYYYY
+import com.example.mvvm.utils.widget.SelectItemDialog
 import com.google.firebase.Firebase
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.storage
@@ -53,8 +53,36 @@ class AddFragment : BaseFragment<FragmentAddBinding, AddViewModel>() {
             when (item) {
                 Item.AddItem -> TODO()
                 is Item.DocumentItem -> viewModel.removeDocument(item.document)
+                is Item.ResearcherItem -> {}
+                is Item.SuperVisorItem -> {}
+                is Item.TitleItem -> TODO()
+            }
+        })
+    }
+
+    private val researcherAdapter by lazy {
+        ItemAdapter(onClickAdd = {
+            pickFile()
+        }, onClickRemove = { item ->
+            when (item) {
+                Item.AddItem -> TODO()
+                is Item.DocumentItem -> {}
                 is Item.ResearcherItem -> TODO()
                 is Item.SuperVisorItem -> TODO()
+                is Item.TitleItem -> TODO()
+            }
+        })
+    }
+
+    private val supervisorAdapter by lazy {
+        ItemAdapter(onClickAdd = {
+            showSelectSupervisorDialog()
+        }, onClickRemove = { item ->
+            when (item) {
+                Item.AddItem -> TODO()
+                is Item.DocumentItem -> {}
+                is Item.ResearcherItem -> TODO()
+                is Item.SuperVisorItem -> viewModel.removeSupervisor()
                 is Item.TitleItem -> TODO()
             }
         })
@@ -82,6 +110,8 @@ class AddFragment : BaseFragment<FragmentAddBinding, AddViewModel>() {
     }
 
     override fun initialize() {
+        registerErrorHandler()
+        viewModel.getSupervisors()
         setUp()
     }
 
@@ -186,8 +216,36 @@ class AddFragment : BaseFragment<FragmentAddBinding, AddViewModel>() {
                 it.map { document ->
                     Item.DocumentItem(document)
                 },
-                "Documents",
+                "Tài liệu",
             )
+        }
+
+        viewModel.selectedSupervisor.observe(this) {
+            if (it == null) {
+                supervisorAdapter.setItemSingleList(
+                    null,
+                    "GVHD",
+                )
+            } else {
+                supervisorAdapter.setItemSingleList(
+                    Item.SuperVisorItem(it),
+                    "GVHD",
+                )
+            }
+        }
+
+        viewModel.addProjectDone.observe(this) {
+            if (it) {
+                showMessage("Add project successfully!", BGType.BG_TYPE_SUCCESS)
+                requireActivity().onBackPressed()
+            }
+        }
+
+        viewModel.addReportDone.observe(this) {
+            if (it) {
+                showMessage("Add report successfully!", BGType.BG_TYPE_SUCCESS)
+                requireActivity().onBackPressed()
+            }
         }
     }
 
@@ -210,8 +268,19 @@ class AddFragment : BaseFragment<FragmentAddBinding, AddViewModel>() {
             reporter = null,
         )
         viewModel.addReport(report, projectId)
-        showMessage("Add report successfully!", BGType.BG_TYPE_SUCCESS)
-        requireActivity().onBackPressed()
+    }
+
+    private fun showSelectSupervisorDialog() {
+        val dialog = SelectItemDialog<Supervisor>(requireContext())
+        dialog.setCancelable()
+        dialog.title("Select Supervisor")
+        dialog.setFunGetText { it.name.toString() }
+        dialog.okButton("OK") { item ->
+            item?.let { viewModel.setSupervisor(it) }
+            dialog.dismiss()
+        }
+        dialog.setItemList(viewModel.supervisors.value ?: emptyList())
+        dialog.show()
     }
 
     private fun onClickAddProject() {
@@ -229,20 +298,23 @@ class AddFragment : BaseFragment<FragmentAddBinding, AddViewModel>() {
             documents = viewModel.documents.value as ArrayList<Document>
         }
 
+        if (viewModel.selectedSupervisor.value == null) {
+            showMessage("Mời chọn GVHD", BGType.BG_TYPE_ERROR)
+            return
+        }
+
         val project = Project(
             genId(),
             title,
             content,
             ProjectState.PROPOSED,
             researcher = emptyList(),
-            supervisor = null,
+            supervisor = viewModel.selectedSupervisor.value,
             documents = documents,
             reports = emptyList(),
             score = null,
         )
         viewModel.addProject(project)
-        showMessage("Add project successfully!", BGType.BG_TYPE_SUCCESS)
-        requireActivity().onBackPressed()
     }
 
     @SuppressLint("SetTextI18n")
@@ -250,7 +322,13 @@ class AddFragment : BaseFragment<FragmentAddBinding, AddViewModel>() {
         viewBinding.rcvDocument.apply {
             adapter = documentAdapter
             layoutManager = LinearLayoutManager(requireContext())
-            documentAdapter.setItems(listOf(), "Documents")
+            documentAdapter.setItems(listOf(), "Tài liệu")
+        }
+
+        viewBinding.rcvSupervisor.apply {
+            adapter = supervisorAdapter
+            layoutManager = LinearLayoutManager(requireContext())
+            supervisorAdapter.setItems(listOf(), "GVHD")
         }
 
         viewBinding.tvDate.text = formatDateToDDMMYYYY(Date())
@@ -263,7 +341,7 @@ class AddFragment : BaseFragment<FragmentAddBinding, AddViewModel>() {
                     edtContent.hint = "Description"
                     layoutDate.gone()
                     rcvSupervisor.visible()
-                    rcvResearcher.visible()
+                    rcvResearcher.gone()
                     rcvDocument.visible()
                 }
             }

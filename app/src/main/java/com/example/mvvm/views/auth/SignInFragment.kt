@@ -32,7 +32,7 @@ class SignInFragment : BaseFragment<FragmentSignInBinding, AuthViewModel>() {
     }
 
     override fun initialize() {
-        registerLiveData()
+        registerErrorHandler()
 
         Glide.with(this).load(activity?.getDrawable(R.drawable.ic_uni)).centerInside().into(viewBinding.imageLogo)
 

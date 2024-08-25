@@ -3,9 +3,6 @@ package com.example.mvvm.views.incharge
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.EditText
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -13,14 +10,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mvvm.R
 import com.example.mvvm.base.BaseFragment
 import com.example.mvvm.databinding.FragmentInChargeBinding
-import com.example.mvvm.domain.UserRole
+import com.example.mvvm.domain.AppState
 import com.example.mvvm.utils.ext.addFragment
 import com.example.mvvm.utils.ext.getStateName
 import com.example.mvvm.utils.ext.getStateTagBackground
 import com.example.mvvm.utils.ext.gone
 import com.example.mvvm.utils.ext.visible
 import com.example.mvvm.views.add.AddFragment
-import com.example.mvvm.views.assign.AssignFragment
 import com.example.mvvm.views.incharge.adapter.DocumentAdapter
 import com.example.mvvm.views.incharge.adapter.ResearcherReportAdapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,7 +31,7 @@ class InChargeFragment : BaseFragment<FragmentInChargeBinding, InChargeViewModel
     }
 
     override fun initialize() {
-        registerLiveData()
+        registerErrorHandler()
         viewModel.inCharge.observe(viewLifecycleOwner) {
             if (it == null) {
                 viewBinding.containerNoInCharge.visible()
@@ -93,7 +89,7 @@ class InChargeFragment : BaseFragment<FragmentInChargeBinding, InChargeViewModel
         viewBinding.listReport.layoutManager = layoutManager
         adapter.setData(data.reports)
 
-        fabType = data.state?.let { getInChargeFAB(it, UserRole.RESEARCHER) }
+        fabType = data.state?.let { getInChargeFAB(it, AppState.userRole) }
 
         if (fabType == null) {
             viewBinding.fab.gone()
@@ -124,9 +120,12 @@ class InChargeFragment : BaseFragment<FragmentInChargeBinding, InChargeViewModel
                     cancelProject()
                 }
 
-                InChargeFAB.REVIEW -> TODO()
-                InChargeFAB.MARK_FINISH -> TODO()
-                null -> TODO()
+                InChargeFAB.REVIEW -> {}
+                InChargeFAB.MARK_FINISH -> {
+                    viewModel.markFinish()
+                }
+
+                null -> {}
             }
         }
     }

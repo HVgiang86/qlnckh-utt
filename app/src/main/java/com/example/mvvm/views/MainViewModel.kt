@@ -28,10 +28,14 @@ class MainViewModel @Inject constructor(val userRepository: UserRepository, val 
                     val user = it.getResearcher()
                     AppState.userId = user.id
                     AppState.userRole = UserRole.RESEARCHER
+                    AppState.name = user.name.toString()
+                    AppState.email = user.email.toString()
                 } else if (it.isSupervisor()) {
                     val user = it.getSupervisor()
                     AppState.userId = user.id
                     AppState.userRole = UserRole.SUPERVISOR
+                    AppState.name = user.name.toString()
+                    AppState.email = user.email.toString()
                 } else {
                     AppState.userRole = UserRole.ADMIN
                 }

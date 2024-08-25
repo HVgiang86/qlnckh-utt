@@ -22,7 +22,7 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding, AuthViewModel>() {
     private val authViewModel: AuthViewModel by viewModels()
 
     private fun setUp() {
-        registerLiveData()
+        registerErrorHandler()
 
         viewBinding.apply {
             btnNext.setOnClickListener {

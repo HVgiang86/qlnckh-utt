@@ -29,7 +29,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
     }
 
     override fun initialize() {
-        registerLiveData()
+        registerErrorHandler()
 
         viewBinding.layoutBirthday.setOnClickListener {
             openPickDate { day, month, year ->

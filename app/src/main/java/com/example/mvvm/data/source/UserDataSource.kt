@@ -20,49 +20,57 @@ interface UserDataSource {
     suspend fun registerSupervisor(data: RegisterInfo): DataResult<Supervisor>
     suspend fun getMyProfile(): DataResult<ProfileResponse>
     suspend fun updateProfile(email: String, request: UpdateProfileRequest): DataResult<ProfileResponse>
+
+    suspend fun getAllSupervisor(): DataResult<List<Supervisor>>
 }
 
 class UserDataSourceImpl
-    @Inject
-    constructor(private val myApi: MyApi) : UserDataSource, BaseDataSource() {
-        override suspend fun login(email: String, password: String) = result {
-            myApi.login(LoginRequest(email, password))
-        }
+@Inject constructor(private val myApi: MyApi) : UserDataSource, BaseDataSource() {
+    override suspend fun login(email: String, password: String) = result {
+        myApi.login(LoginRequest(email, password))
+    }
 
-        override suspend fun registerResearcher(data: RegisterInfo) = resultWithBase {
-            val body = ResearcherReg(
-                data.name,
-                data.email,
-                data.password,
-                data.birthday,
-                data.major,
-                data.className,
-            )
-            myApi.registerResearcher(body)
-        }
+    override suspend fun registerResearcher(data: RegisterInfo) = resultWithBase {
+        val body = ResearcherReg(
+            data.name,
+            data.email,
+            data.password,
+            data.birthday,
+            data.major,
+            data.className,
+        )
+        myApi.registerResearcher(body)
+    }
 
-        override suspend fun registerSupervisor(data: RegisterInfo) = resultWithBase {
-            val body = SupervisorReg(
-                data.name,
-                data.email,
-                data.password,
-                data.birthday,
-                data.faculty,
-                data.department,
-                data.title,
-            )
-            myApi.registerSupervisor(body)
-        }
+    override suspend fun registerSupervisor(data: RegisterInfo) = resultWithBase {
+        val body = SupervisorReg(
+            data.name,
+            data.email,
+            data.password,
+            data.birthday,
+            data.faculty,
+            data.department,
+            data.title,
+        )
+        myApi.registerSupervisor(body)
+    }
 
-        override suspend fun getMyProfile(): DataResult<ProfileResponse> {
-            return resultWithBase {
-                myApi.getMyProfile()
-            }
-        }
-
-        override suspend fun updateProfile(email: String, request: UpdateProfileRequest): DataResult<ProfileResponse> {
-            return resultWithBase {
-                myApi.updateProfile(request, email)
-            }
+    override suspend fun getMyProfile(): DataResult<ProfileResponse> {
+        return resultWithBase {
+            myApi.getMyProfile()
         }
     }
+
+    override suspend fun updateProfile(email: String, request: UpdateProfileRequest): DataResult<ProfileResponse> {
+        return resultWithBase {
+            myApi.updateProfile(request, email)
+        }
+    }
+
+    override suspend fun getAllSupervisor(): DataResult<List<Supervisor>> {
+        return resultWithBase {
+            myApi.getAllSupervisor()
+
+        }
+    }
+}

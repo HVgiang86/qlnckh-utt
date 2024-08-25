@@ -5,9 +5,7 @@ import com.example.mvvm.domain.ProjectState
 import com.example.mvvm.domain.UserRole
 
 enum class ProjectFAB {
-    APPROVE,
-    ASSIGN,
-    SCORE,
+    APPROVE, ASSIGN, SCORE,
 }
 
 fun getProjectFAB(state: ProjectState, role: UserRole): ProjectFAB? {
@@ -18,7 +16,7 @@ fun getProjectFAB(state: ProjectState, role: UserRole): ProjectFAB? {
         }
 
         ProjectState.PROPOSED -> {
-          return null
+            return null
         }
 
         ProjectState.IN_PROGRESS -> {
@@ -46,7 +44,7 @@ fun getProjectFAB(state: ProjectState, role: UserRole): ProjectFAB? {
             }
         }
 
-        ProjectState.CANCELLED -> {
+        ProjectState.CANCEL -> {
             return null
         }
 

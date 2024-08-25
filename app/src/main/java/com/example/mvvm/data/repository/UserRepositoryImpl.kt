@@ -8,25 +8,28 @@ import com.example.mvvm.views.auth.RegisterInfo
 import javax.inject.Inject
 
 class UserRepositoryImpl
-    @Inject
-    constructor(private val remote: UserDataSource) : UserRepository, BaseRepository() {
-        override suspend fun login(email: String, password: String) = runFlow {
-            remote.login(email, password)
-        }
-
-        override suspend fun registerResearcher(registerInfo: RegisterInfo) = runFlow {
-            remote.registerResearcher(registerInfo)
-        }
-
-        override suspend fun registerSupervisor(registerInfo: RegisterInfo) = runFlow {
-            remote.registerSupervisor(registerInfo)
-        }
-
-        override suspend fun getMyProfile() = runFlow {
-            remote.getMyProfile()
-        }
-
-        override suspend fun updateProfile(email: String, request: UpdateProfileRequest) = runFlow {
-            remote.updateProfile(email, request)
-        }
+@Inject constructor(private val remote: UserDataSource) : UserRepository, BaseRepository() {
+    override suspend fun login(email: String, password: String) = runFlow {
+        remote.login(email, password)
     }
+
+    override suspend fun registerResearcher(registerInfo: RegisterInfo) = runFlow {
+        remote.registerResearcher(registerInfo)
+    }
+
+    override suspend fun registerSupervisor(registerInfo: RegisterInfo) = runFlow {
+        remote.registerSupervisor(registerInfo)
+    }
+
+    override suspend fun getMyProfile() = runFlow {
+        remote.getMyProfile()
+    }
+
+    override suspend fun updateProfile(email: String, request: UpdateProfileRequest) = runFlow {
+        remote.updateProfile(email, request)
+    }
+
+    override suspend fun getSupervisors() = runFlow {
+        remote.getAllSupervisor()
+    }
+}
