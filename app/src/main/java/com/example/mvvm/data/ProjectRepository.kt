@@ -11,6 +11,6 @@ interface ProjectRepository {
     suspend fun getProjectHistorySupervisor(userId: Long): Flow<List<Project>>
     suspend fun getProjectHistoryResearcher(userId: Long): Flow<List<Project>>
 
-    suspend fun addResearcherReport(report: ResearcherReport, projectId: Int)
+    suspend fun addResearcherReport(report: ResearcherReport, projectId: Long)
     suspend fun addProject(project: Project)
 }

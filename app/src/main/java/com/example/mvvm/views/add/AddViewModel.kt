@@ -40,7 +40,7 @@ class AddViewModel
             _documents.value = list
         }
 
-        fun addReport(report: ResearcherReport, projectId: Int) {
+        fun addReport(report: ResearcherReport, projectId: Long) {
             runFlow(Dispatchers.IO) {
                 projectRepository.addResearcherReport(report, projectId)
             }

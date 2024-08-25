@@ -1,5 +1,6 @@
 package com.example.mvvm.data.source.api
 
+import com.example.mvvm.data.source.api.model.request.CouncilRequest
 import com.example.mvvm.data.source.api.model.request.LoginRequest
 import com.example.mvvm.data.source.api.model.request.ResearcherReg
 import com.example.mvvm.data.source.api.model.request.SupervisorReg

@@ -14,11 +14,13 @@ import com.example.mvvm.R
 import com.example.mvvm.base.BGType
 import com.example.mvvm.base.BaseFragment
 import com.example.mvvm.databinding.FragmentAddBinding
+import com.example.mvvm.domain.AppState
 import com.example.mvvm.domain.Document
 import com.example.mvvm.domain.Project
 import com.example.mvvm.domain.ProjectState
 import com.example.mvvm.domain.Researcher
 import com.example.mvvm.domain.ResearcherReport
+import com.example.mvvm.utils.ext.genId
 import com.example.mvvm.utils.ext.gone
 import com.example.mvvm.utils.ext.visible
 import com.example.mvvm.utils.formatDateToDDMMYYYY
@@ -151,7 +153,7 @@ class AddFragment : BaseFragment<FragmentAddBinding, AddViewModel>() {
 
     fun setUp() {
         val type = arguments?.getInt(KEY_TYPE, 0)
-        val projectId = arguments?.getLong("projectId", 0)
+        val projectId: Long? = arguments?.getLong("projectId", 0L)
         setupUI(type ?: 0)
 
         setupObserver()
@@ -163,7 +165,7 @@ class AddFragment : BaseFragment<FragmentAddBinding, AddViewModel>() {
                 }
 
                 TYPE_ADD_REPORT -> {
-                    if (projectId != null && projectId != 0) {
+                    if (projectId != null && projectId != 0L) {
                         onClickAddReport(projectId)
                     }
                 }
@@ -188,7 +190,7 @@ class AddFragment : BaseFragment<FragmentAddBinding, AddViewModel>() {
         }
     }
 
-    private fun onClickAddReport(projectId: Int) {
+    private fun onClickAddReport(projectId: Long) {
         addDocument()
 
         val title = viewBinding.edtTitle.text.toString()
@@ -199,13 +201,12 @@ class AddFragment : BaseFragment<FragmentAddBinding, AddViewModel>() {
         }
 
         val report = ResearcherReport(
-            genId(),
             title,
             Date(),
             content = content,
-            file = viewModel.documents.value?.first() ?: Document(1, "", ""),
+            file = viewModel.documents.value,
             supervisorComments = emptyList(),
-            reporter = FakeData.researchers[0],
+            reporter = null,
         )
         viewModel.addReport(report, projectId)
         showMessage("Add report successfully!", BGType.BG_TYPE_SUCCESS)
@@ -222,10 +223,6 @@ class AddFragment : BaseFragment<FragmentAddBinding, AddViewModel>() {
             return
         }
 
-        val researcherList = ArrayList<Researcher>()
-        researcherList.add(FakeData.researchers[0])
-        researcherList.add(FakeData.researchers[1])
-
         var documents = ArrayList<Document>()
         if (viewModel.documents.value != null) {
             documents = viewModel.documents.value as ArrayList<Document>
@@ -236,7 +233,7 @@ class AddFragment : BaseFragment<FragmentAddBinding, AddViewModel>() {
             title,
             content,
             ProjectState.PROPOSED,
-            researcher = researcherList,
+            researcher = emptyList(),
             supervisor = null,
             documents = documents,
             reports = emptyList(),
