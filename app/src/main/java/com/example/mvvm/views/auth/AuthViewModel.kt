@@ -17,10 +17,13 @@ class AuthViewModel
     @Inject
     constructor(private val userRepository: UserRepository, private val tokenRepository: TokenRepository) : BaseViewModel() {
         private val _userRole = MutableLiveData<UserRole?>(null)
-        private val _loginSuccess = MutableLiveData<Boolean>(false)
+        private val _loginSuccess = MutableLiveData(false)
+
+        private val _signUpSuccess = MutableLiveData(false)
 
         val userRole: MutableLiveData<UserRole?> = _userRole
         val loginSuccess: MutableLiveData<Boolean> = _loginSuccess
+        val signUpSuccess: MutableLiveData<Boolean> = _signUpSuccess
 
         fun signIn(userName: String, password: String) {
             runFlow(Dispatchers.IO) {
@@ -49,6 +52,26 @@ class AuthViewModel
                     } else {
                         _userRole.postValue(UserRole.ADMIN)
                     }
+                }
+            }
+        }
+
+        fun signUpResearcher(registerInfo: RegisterInfo) {
+            runFlow(Dispatchers.IO) {
+                userRepository.registerResearcher(registerInfo).onCompletion { hideLoading() }.collect {
+                    Timber.d("collect $it")
+                    tokenRepository.clearToken()
+                    _signUpSuccess.postValue(true)
+                }
+            }
+        }
+
+        fun signUpSupervisor(registerInfo: RegisterInfo) {
+            runFlow(Dispatchers.IO) {
+                userRepository.registerSupervisor(registerInfo).onCompletion { hideLoading() }.collect {
+                    Timber.d("collect $it")
+                    tokenRepository.clearToken()
+                    _signUpSuccess.postValue(true)
                 }
             }
         }

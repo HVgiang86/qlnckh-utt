@@ -43,10 +43,20 @@ class ResearcherReportAdapter : RecyclerView.Adapter<ResearcherReportAdapter.Vie
         val binding = holder.binding
         val item = reports[position]
         binding.textReportTitle.text = item.title
+        if (item.title.isNullOrEmpty()) {
+            binding.textReportTitle.text = "Báo cáo"
+        }
         binding.textReportContent.text = item.content
-        binding.textReportDate.showDateDMY(item.date)
-        binding.textReporter.text = item.reporter.name
-        binding.textFileName.setHyperLink(item.file.title, item.file.url)
-        binding.textFileName.setOnClickListener { Toasty.info(holder.itemView.context, item.file.url).show() }
+        item.date?.let { binding.textReportDate.showDateDMY(it) }
+
+        if (item.file.isNullOrEmpty()) {
+            binding.textFileName.text = "Không có file đính kèm"
+        } else {
+            val title = item.file.first().title
+            val url = item.file.first().url
+
+            binding.textFileName.setHyperLink(title, url)
+            binding.textFileName.setOnClickListener { Toasty.info(holder.itemView.context, url).show() }
+        }
     }
 }

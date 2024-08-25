@@ -3,6 +3,8 @@ package com.example.mvvm.di
 import android.content.Context
 import android.content.SharedPreferences
 import com.example.mvvm.base.AppConstants
+import com.example.mvvm.data.source.ProjectDataSource
+import com.example.mvvm.data.source.ProjectDataSourceImpl
 import com.example.mvvm.data.source.UserDataSource
 import com.example.mvvm.data.source.UserDataSourceImpl
 import com.example.mvvm.data.source.api.FirebaseApi
@@ -38,8 +40,13 @@ object DataSourceModule {
     @Provides
     @Singleton
     fun provideUserDataSource(myApi: MyApi): UserDataSource {
-        println("gianghv provideUserDataSource")
         return UserDataSourceImpl(myApi)
+    }
+
+    @Provides
+    @Singleton
+    fun provideProjectDataSource(myApi: MyApi): ProjectDataSource {
+        return ProjectDataSourceImpl(myApi)
     }
 
     @Provides

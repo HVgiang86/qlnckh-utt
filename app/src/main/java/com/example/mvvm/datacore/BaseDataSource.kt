@@ -1,5 +1,6 @@
 package com.example.mvvm.datacore
 
+import com.example.mvvm.data.source.api.model.response.BaseResponse
 import com.example.mvvm.di.IODispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
@@ -39,7 +40,9 @@ abstract class BaseDataSource {
             val response = requestBlock()
             if (response == null) {
                 DataResult.Error(Exception("Response is null"))
-            } else DataResult.Success(response)
+            } else {
+                DataResult.Success(response)
+            }
         } catch (e: Exception) {
             e.printStackTrace()
             DataResult.Error(e)
@@ -59,13 +62,33 @@ abstract class BaseDataSource {
 
                 return DataResult.Success(result)
             } else {
-                DataResult.Error(Exception(response.message()))
+                return DataResult.Error(Exception(response.errorBody()?.string()))
             }
-
         } catch (e: Exception) {
             e.printStackTrace()
             return DataResult.Error(e)
         }
-        return DataResult.Error(Exception("Unknown error"))
+    }
+
+    protected suspend fun <R> resultWithBase(
+        block: suspend () -> Response<BaseResponse<R>>,
+    ): DataResult<R> {
+        try {
+            val response = block.invoke()
+            if (response.isSuccessful) {
+                val result = response.body()?.successfully
+                println("[DEBUG] $result")
+
+                if (result == null) return DataResult.Error(Exception("Response is null"))
+
+                return DataResult.Success(result)
+            } else {
+                println("[DEBUG] ${response.code()} ${response.message()}")
+                return DataResult.Error(Exception(response.errorBody()?.string()))
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return DataResult.Error(e)
+        }
     }
 }

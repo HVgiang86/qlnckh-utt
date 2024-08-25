@@ -4,13 +4,6 @@ import com.example.mvvm.domain.Researcher
 import com.example.mvvm.domain.Supervisor
 import com.example.mvvm.domain.UserRole
 import com.google.gson.annotations.Expose
-import com.google.gson.annotations.SerializedName
-
-data class GetProfileResponse(
-    @Expose
-    @SerializedName("successfully")
-    val profile: ProfileResponse,
-)
 
 data class ProfileResponse(
     @Expose

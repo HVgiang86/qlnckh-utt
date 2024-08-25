@@ -22,6 +22,8 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding, AuthViewModel>() {
     private val authViewModel: AuthViewModel by viewModels()
 
     private fun setUp() {
+        registerLiveData()
+
         viewBinding.apply {
             btnNext.setOnClickListener {
                 onClickNext()
@@ -30,8 +32,8 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding, AuthViewModel>() {
                 goBackFragment()
             }
             layoutBirthday.setOnClickListener {
-                openPickDate { date ->
-                    tvDate.text = date
+                openPickDate { day, month, year ->
+                    tvDate.text = "$year-$month-$day"
                 }
             }
         }
@@ -50,7 +52,7 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding, AuthViewModel>() {
         setUp()
     }
 
-    private fun openPickDate(onPicked: (String) -> Unit) {
+    private fun openPickDate(onPicked: (String, String, String) -> Unit) {
         val c = Calendar.getInstance()
         val year = c.get(Calendar.YEAR)
         val month = c.get(Calendar.MONTH)
@@ -58,7 +60,7 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding, AuthViewModel>() {
         val dpd = DatePickerDialog(requireContext(), { _, y, monthOfYear, dayOfMonth ->
             val d = if (dayOfMonth >= 10) dayOfMonth.toString() else "0$dayOfMonth"
             val m = if (monthOfYear + 1 >= 10) (monthOfYear + 1).toString() else "0${monthOfYear + 1}"
-            onPicked("$d/$m/$y")
+            onPicked(d, m, "$y")
         }, year, month, day)
         dpd.show()
     }

@@ -4,9 +4,8 @@ import com.example.mvvm.data.source.api.MyApi
 import com.example.mvvm.data.source.api.model.request.LoginRequest
 import com.example.mvvm.data.source.api.model.request.ResearcherReg
 import com.example.mvvm.data.source.api.model.request.SupervisorReg
-import com.example.mvvm.data.source.api.model.response.GetProfileResponse
+import com.example.mvvm.data.source.api.model.request.UpdateProfileRequest
 import com.example.mvvm.data.source.api.model.response.LoginResponse
-import com.example.mvvm.data.source.api.model.response.LoginResult
 import com.example.mvvm.data.source.api.model.response.ProfileResponse
 import com.example.mvvm.datacore.BaseDataSource
 import com.example.mvvm.datacore.DataResult
@@ -19,7 +18,8 @@ interface UserDataSource {
     suspend fun login(email: String, password: String): DataResult<LoginResponse>
     suspend fun registerResearcher(data: RegisterInfo): DataResult<Researcher>
     suspend fun registerSupervisor(data: RegisterInfo): DataResult<Supervisor>
-    suspend fun getMyProfile(): DataResult<GetProfileResponse>
+    suspend fun getMyProfile(): DataResult<ProfileResponse>
+    suspend fun updateProfile(email: String, request: UpdateProfileRequest): DataResult<ProfileResponse>
 }
 
 class UserDataSourceImpl
@@ -29,7 +29,7 @@ class UserDataSourceImpl
             myApi.login(LoginRequest(email, password))
         }
 
-        override suspend fun registerResearcher(data: RegisterInfo) = returnResult {
+        override suspend fun registerResearcher(data: RegisterInfo) = resultWithBase {
             val body = ResearcherReg(
                 data.name,
                 data.email,
@@ -41,7 +41,7 @@ class UserDataSourceImpl
             myApi.registerResearcher(body)
         }
 
-        override suspend fun registerSupervisor(data: RegisterInfo) = returnResult {
+        override suspend fun registerSupervisor(data: RegisterInfo) = resultWithBase {
             val body = SupervisorReg(
                 data.name,
                 data.email,
@@ -54,9 +54,15 @@ class UserDataSourceImpl
             myApi.registerSupervisor(body)
         }
 
-        override suspend fun getMyProfile(): DataResult<GetProfileResponse> {
-            return result {
+        override suspend fun getMyProfile(): DataResult<ProfileResponse> {
+            return resultWithBase {
                 myApi.getMyProfile()
+            }
+        }
+
+        override suspend fun updateProfile(email: String, request: UpdateProfileRequest): DataResult<ProfileResponse> {
+            return resultWithBase {
+                myApi.updateProfile(request, email)
             }
         }
     }

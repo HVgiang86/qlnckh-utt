@@ -16,11 +16,16 @@ import com.example.mvvm.utils.ext.visible
 
 class ProjectListAdapter : RecyclerView.Adapter<ProjectListAdapter.ViewHolder>() {
     private var data: List<Project> = emptyList()
+    private var onItemClickListener: ((Project) -> Unit)? = null
 
     @SuppressLint("NotifyDataSetChanged")
     fun setData(data: List<Project>) {
         this.data = data
         notifyDataSetChanged()
+    }
+
+    fun setOnItemClickListener(listener: (Project) -> Unit) {
+        onItemClickListener = listener
     }
 
     class ViewHolder(val binding: ItemProjectBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -46,31 +51,39 @@ class ProjectListAdapter : RecyclerView.Adapter<ProjectListAdapter.ViewHolder>()
         binding.textTitle.text = item.title
         binding.textDescription.text = item.description
 
-        val researcherAdapter = ArrayAdapter(
-            holder.itemView.context,
-            R.layout.simple_list_item_1,
-            item.researcher.map { it.name },
-        )
+        val researcherAdapter = item.researcher?.let {
+            ArrayAdapter(
+                holder.itemView.context,
+                R.layout.simple_list_item_1,
+                it.map { researcher -> researcher.name },
+            )
+        }
         binding.listResearcher.adapter = researcherAdapter
 
         val supervisorAdapter = ArrayAdapter(
             holder.itemView.context,
             R.layout.simple_list_item_1,
-            item.supervisor.map { it.name },
+            listOf(item.supervisor?.name ?: ""),
         )
         binding.listSupervisor.adapter = supervisorAdapter
 
-        binding.textStatusTag.background = AppCompatResources.getDrawable(
-            holder.itemView.context,
-            item.state.getStateTagBackground(),
-        )
-        binding.textStatusTag.text = item.state.getStateName()
+        binding.textStatusTag.background = item.state?.getStateTagBackground()?.let {
+            AppCompatResources.getDrawable(
+                holder.itemView.context,
+                it,
+            )
+        }
+        binding.textStatusTag.text = item.state?.getStateName()
 
         if (item.score == null) {
             binding.textScore.invisible()
         } else {
             binding.textScore.visible()
             binding.textScore.text = "${item.score}/10"
+        }
+
+        binding.root.setOnClickListener {
+            onItemClickListener?.invoke(item)
         }
     }
 }

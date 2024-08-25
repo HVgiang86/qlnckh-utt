@@ -1,6 +1,5 @@
 package com.example.mvvm.utils.widget
 
-import android.app.ProgressDialog
 import android.content.Context
 import java.lang.ref.WeakReference
 

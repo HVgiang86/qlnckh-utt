@@ -69,8 +69,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:hint="Ngày sinh"
-            android:textColorHint="@color/black"
             android:textColor="@color/black"
+            android:textColorHint="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -159,9 +159,9 @@
 
             <RadioButton
                 android:id="@+id/rbNCS"
-                android:checked="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:checked="true"
                 android:text="Nghiên cứu sinh" />
 
             <RadioButton

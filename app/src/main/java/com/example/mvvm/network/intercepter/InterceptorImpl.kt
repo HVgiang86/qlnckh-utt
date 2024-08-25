@@ -9,60 +9,82 @@ import java.io.IOException
 import java.net.HttpURLConnection
 import javax.inject.Inject
 
-class InterceptorImpl @Inject constructor(
-    private var tokenRepository: TokenRepository,
-) : Interceptor {
-    private var isRefreshToken = false
+class InterceptorImpl
+    @Inject
+    constructor(
+        private var tokenRepository: TokenRepository,
+    ) : Interceptor {
+        private var isRefreshToken = false
 
-    @Throws(IOException::class)
-    override fun intercept(
-        @NonNull chain: Interceptor.Chain,
-    ): Response {
-        val builder = initializeHeader(chain)
-        val request = builder.build()
+        @Throws(IOException::class)
+        override fun intercept(
+            @NonNull chain: Interceptor.Chain,
+        ): Response {
+            val builder = initializeHeader(chain)
+            val request = builder.build()
 
-        var response = chain.proceed(request)
+            var response = chain.proceed(request)
 
-        if (!isRefreshToken && response.code == HttpURLConnection.HTTP_FORBIDDEN) {
-            val token = tokenRepository.getToken()
-            println("Stored Token: $token")
+            if (!isRefreshToken && response.code == HttpURLConnection.HTTP_FORBIDDEN) {
+                val token = tokenRepository.getToken()
+                println("Stored Token: $token")
 
-            if (token.isNullOrEmpty()) {
-                val newRequest = initNewRequest(request, token)
-                response.close()
-                response = chain.proceed(newRequest)
+                if (request.url.toString().contains("login")) {
+                    val builder1 = request.newBuilder().removeHeader(HEADER_AUTH_TOKEN)
+                    val loginRequest = builder1.build()
+                    response = chain.proceed(loginRequest)
+                } else {
+                    if (token.isNullOrEmpty()) {
+                        val newRequest = initNewRequest(request, token)
+                        response.close()
+                        response = chain.proceed(newRequest)
+                    }
+                }
             }
 
-        }
-        return response
-    }
+            response.headers[HEADER_SET_COOKIE]?.let {
+                println("Stored Cookie: $it")
+                tokenRepository.clearCookie()
+                tokenRepository.saveCookie(it)
+            }
 
-    private fun initNewRequest(
-        request: Request,
-        token: String?,
-    ): Request {
-        val builder = request.newBuilder().removeHeader(HEADER_AUTH_TOKEN)
-        token?.let {
-            builder.header(HEADER_AUTH_TOKEN, "Bearer $token")
-        }
-        return builder.build()
-    }
-
-    private fun initializeHeader(chain: Interceptor.Chain): Request.Builder {
-        val originRequest = chain.request()
-
-        val builder = originRequest.newBuilder().method(originRequest.method, originRequest.body)
-
-        tokenRepository.getToken()?.let {
-            println("Stored Token: $it")
-            builder.addHeader(HEADER_AUTH_TOKEN, "Bearer $it")
+            return response
         }
 
-        return builder
-    }
+        private fun initNewRequest(
+            request: Request,
+            token: String?,
+        ): Request {
+            val builder = request.newBuilder().removeHeader(HEADER_AUTH_TOKEN)
+            token?.let {
+                builder.header(HEADER_AUTH_TOKEN, "Bearer $token")
+            }
+            return builder.build()
+        }
 
-    companion object {
-        private const val HEADER_ACCEPT = "Accept"
-        private const val HEADER_AUTH_TOKEN = "Authorization"
+        private fun initializeHeader(chain: Interceptor.Chain): Request.Builder {
+            val originRequest = chain.request()
+
+            val builder = originRequest.newBuilder().method(originRequest.method, originRequest.body)
+
+            tokenRepository.getToken()?.let {
+                println("Stored Token: $it")
+                builder.addHeader(HEADER_AUTH_TOKEN, "Bearer $it")
+            }
+
+            tokenRepository.getCookie()?.let {
+                println("Stored Cookie: $it")
+                builder.addHeader(HEADER_COOKIE, it)
+            }
+
+            return builder
+        }
+
+        companion object {
+            private const val HEADER_ACCEPT = "Accept"
+            private const val HEADER_CONTENT_TYPE = "Content-Type"
+            private const val HEADER_COOKIE = "Cookie"
+            private const val HEADER_SET_COOKIE = "Set-Cookie"
+            private const val HEADER_AUTH_TOKEN = "Authorization"
+        }
     }
-}

@@ -15,7 +15,6 @@ import com.example.mvvm.databinding.FragmentSignInBinding
 import com.example.mvvm.domain.AppState
 import com.example.mvvm.utils.ext.addClearBackStackFragment
 import com.example.mvvm.utils.ext.addFragment
-import com.example.mvvm.utils.utils.AppUtils
 import com.example.mvvm.views.home.HomeFragment
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -60,6 +59,7 @@ class SignInFragment : BaseFragment<FragmentSignInBinding, AuthViewModel>() {
             if (it != null) {
                 AppState.userRole = it
                 AppState.logined = true
+                showMessage("Đăng nhập thành công!", BGType.BG_TYPE_SUCCESS)
                 addClearBackStackFragment(R.id.container, HomeFragment.newInstance())
             }
         }
@@ -67,7 +67,6 @@ class SignInFragment : BaseFragment<FragmentSignInBinding, AuthViewModel>() {
         viewModel.loginSuccess.observe(viewLifecycleOwner) {
             if (it) {
                 viewModel.getProfile()
-                showMessage("Đăng nhập thành công!", BGType.BG_TYPE_SUCCESS)
             }
         }
     }
@@ -79,16 +78,17 @@ class SignInFragment : BaseFragment<FragmentSignInBinding, AuthViewModel>() {
         val email = viewBinding.edtEmail.text?.trim().toString()
         val pass = viewBinding.edtPassword.text?.trim().toString()
 
-        if (!AppUtils.isValidatedEmail(email)) {
-            showMessage("Email không hợp lệ!", BGType.BG_TYPE_ERROR)
-            viewBinding.edtEmail.setText("")
-            return
-        }
-        if (!AppUtils.isValidatedPassword(pass)) {
-            showMessage("Mật khẩu không hợp lệ!", BGType.BG_TYPE_ERROR)
-            viewBinding.edtPassword.setText("")
-            return
-        }
-        viewModel.signIn(email, pass)
+//        if (!AppUtils.isValidatedEmail(email)) {
+//            showMessage("Email không hợp lệ!", BGType.BG_TYPE_ERROR)
+//            viewBinding.edtEmail.setText("")
+//            return
+//        }
+//        if (!AppUtils.isValidatedPassword(pass)) {
+//            showMessage("Mật khẩu không hợp lệ!", BGType.BG_TYPE_ERROR)
+//            viewBinding.edtPassword.setText("")
+//            return
+//        }
+//        viewModel.signIn(email, pass)
+        viewModel.signIn("sv3@gmail.com", "123456")
     }
 }

@@ -25,6 +25,7 @@ class InChargeViewModel
 
         fun getInCharge() {
             runFlow(Dispatchers.IO) {
+                Timber.d("get in charge ${AppState.userId} ${AppState.userRole}")
                 if (AppState.userRole == UserRole.RESEARCHER) {
                     projectRepository.getInChargeResearcher(AppState.userId).collect {
                         Timber.d("get in charge $it")

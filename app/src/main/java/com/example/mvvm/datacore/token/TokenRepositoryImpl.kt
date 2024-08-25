@@ -12,4 +12,10 @@ class TokenRepositoryImpl
         override fun saveToken(token: String) = local.saveToken(token)
 
         override fun clearToken() = local.clearToken()
+
+        override fun getCookie(): String? = local.getCookie()
+
+        override fun saveCookie(cookie: String) = local.saveCookie(cookie)
+
+        override fun clearCookie() = local.clearCookie()
     }

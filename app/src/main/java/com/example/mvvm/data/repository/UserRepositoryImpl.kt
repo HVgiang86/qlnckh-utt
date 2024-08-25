@@ -2,6 +2,7 @@ package com.example.mvvm.data.repository
 
 import com.example.mvvm.data.UserRepository
 import com.example.mvvm.data.source.UserDataSource
+import com.example.mvvm.data.source.api.model.request.UpdateProfileRequest
 import com.example.mvvm.datacore.BaseRepository
 import com.example.mvvm.views.auth.RegisterInfo
 import javax.inject.Inject
@@ -22,6 +23,10 @@ class UserRepositoryImpl
         }
 
         override suspend fun getMyProfile() = runFlow {
-            remote.getMyProfile().map { it.profile }
+            remote.getMyProfile()
+        }
+
+        override suspend fun updateProfile(email: String, request: UpdateProfileRequest) = runFlow {
+            remote.updateProfile(email, request)
         }
     }

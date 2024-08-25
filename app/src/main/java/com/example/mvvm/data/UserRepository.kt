@@ -1,7 +1,7 @@
 package com.example.mvvm.data
 
+import com.example.mvvm.data.source.api.model.request.UpdateProfileRequest
 import com.example.mvvm.data.source.api.model.response.LoginResponse
-import com.example.mvvm.data.source.api.model.response.LoginResult
 import com.example.mvvm.data.source.api.model.response.ProfileResponse
 import com.example.mvvm.domain.Researcher
 import com.example.mvvm.domain.Supervisor
@@ -13,4 +13,5 @@ interface UserRepository {
     suspend fun registerResearcher(registerInfo: RegisterInfo): Flow<Researcher>
     suspend fun registerSupervisor(registerInfo: RegisterInfo): Flow<Supervisor>
     suspend fun getMyProfile(): Flow<ProfileResponse>
+    suspend fun updateProfile(email: String, request: UpdateProfileRequest): Flow<ProfileResponse>
 }

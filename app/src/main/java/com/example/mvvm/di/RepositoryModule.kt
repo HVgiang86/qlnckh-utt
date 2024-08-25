@@ -4,6 +4,7 @@ import com.example.mvvm.data.ProjectRepository
 import com.example.mvvm.data.UserRepository
 import com.example.mvvm.data.repository.ProjectRepositoryImpl
 import com.example.mvvm.data.repository.UserRepositoryImpl
+import com.example.mvvm.data.source.ProjectDataSource
 import com.example.mvvm.data.source.UserDataSource
 import com.example.mvvm.datacore.token.TokenDataSource
 import com.example.mvvm.datacore.token.TokenRepository
@@ -19,8 +20,8 @@ import javax.inject.Singleton
 object RepositoryModule {
     @Provides
     @Singleton
-    fun provideRoomRepository(): ProjectRepository {
-        return ProjectRepositoryImpl()
+    fun provideProjectRepository(remote: ProjectDataSource): ProjectRepository {
+        return ProjectRepositoryImpl(remote)
     }
 
     @Provides

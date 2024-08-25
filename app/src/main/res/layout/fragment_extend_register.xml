@@ -45,7 +45,7 @@
         android:textSize="@dimen/sp_16">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edtStudentCode"
+            android:id="@+id/edtStudentCodeTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Mã sinh viên"
@@ -63,7 +63,7 @@
         android:textSize="@dimen/sp_16">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edtClass"
+            android:id="@+id/edtClassDepartment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Lớp"
@@ -81,7 +81,7 @@
         android:textSize="@dimen/sp_16">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edtKhoa"
+            android:id="@+id/edtFaculty"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:hint="Khoa"

@@ -1,12 +1,16 @@
 package com.example.mvvm.views.incharge
 
-import android.R
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.mvvm.R
 import com.example.mvvm.base.BaseFragment
 import com.example.mvvm.databinding.FragmentInChargeBinding
 import com.example.mvvm.domain.UserRole
@@ -17,7 +21,7 @@ import com.example.mvvm.utils.ext.visible
 import com.example.mvvm.views.incharge.adapter.DocumentAdapter
 import com.example.mvvm.views.incharge.adapter.ResearcherReportAdapter
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class InChargeFragment : BaseFragment<FragmentInChargeBinding, InChargeViewModel>() {
@@ -28,6 +32,7 @@ class InChargeFragment : BaseFragment<FragmentInChargeBinding, InChargeViewModel
     }
 
     override fun initialize() {
+        registerLiveData()
         viewModel.inCharge.observe(viewLifecycleOwner) {
             if (it == null) {
                 viewBinding.containerNoInCharge.visible()
@@ -39,33 +44,45 @@ class InChargeFragment : BaseFragment<FragmentInChargeBinding, InChargeViewModel
                 setData()
             }
         }
+        viewModel.getInCharge()
+
+        lifecycleScope.launch {
+            viewModel.isLoading.collect {
+                if (it) {
+                    showLoading()
+                } else {
+                    hideLoading()
+                    viewBinding.swipeRefreshLayout.isRefreshing = false
+                }
+            }
+        }
+
+        viewBinding.swipeRefreshLayout.setOnRefreshListener {
+            viewModel.getInCharge()
+        }
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun setData() {
         val data = viewModel.inCharge.value
 
-        Timber.d("data: $data")
-
         if (data == null) return
 
         viewBinding.textTitle.text = data.title
         viewBinding.textDescription.text = data.description
-        viewBinding.textStatusTag.background = resources.getDrawable(data.state.getStateTagBackground())
-        viewBinding.textStatusTag.text = data.state.getStateName()
+        viewBinding.textStatusTag.background = data.state?.let { resources.getDrawable(it.getStateTagBackground()) }
+        viewBinding.textStatusTag.text = data.state?.getStateName() ?: "Unknown"
 
-        val researcherAdapter =
-            ArrayAdapter(requireContext(), R.layout.simple_list_item_1, data.researcher.map { it.name })
+        val researcherAdapter = data.researcher?.let { ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, it.map { it.name }) }
         viewBinding.listResearcher.adapter = researcherAdapter
 
-        val supervisorAdapter =
-            ArrayAdapter(requireContext(), R.layout.simple_list_item_1, data.supervisor.map { it.name })
+        val supervisorAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, listOf(data.supervisor?.name))
         viewBinding.listSupervisor.adapter = supervisorAdapter
 
         val documentAdapter = DocumentAdapter()
         viewBinding.listDocument.layoutManager = LinearLayoutManager(requireContext())
         viewBinding.listDocument.adapter = documentAdapter
-        documentAdapter.setData(data.documents)
+        data.documents?.let { documentAdapter.setData(it) }
 
         val adapter = ResearcherReportAdapter()
         val layoutManager = LinearLayoutManager(requireContext())
@@ -73,7 +90,7 @@ class InChargeFragment : BaseFragment<FragmentInChargeBinding, InChargeViewModel
         viewBinding.listReport.layoutManager = layoutManager
         adapter.setData(data.reports)
 
-        fabType = getInChargeFAB(data.state, UserRole.RESEARCHER)
+        fabType = data.state?.let { getInChargeFAB(it, UserRole.RESEARCHER) }
 
         if (fabType == null) {
             viewBinding.fab.gone()
@@ -111,6 +128,39 @@ class InChargeFragment : BaseFragment<FragmentInChargeBinding, InChargeViewModel
         }
     }
 
+    private fun showMarkScoreDialog() {
+        // Inflate the custom dialog layout
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.score_dialog, null)
+
+        // Create an AlertDialog builder
+        val dialogBuilder = AlertDialog.Builder(requireContext(), R.style.CustomAlertDialog).setView(dialogView)
+
+        // Create and show the dialog
+        val dialog = dialogBuilder.create()
+
+        // Set up the buttons
+        val btnCancel = dialogView.findViewById<Button>(R.id.btnCancel)
+        val btnSubmit = dialogView.findViewById<Button>(R.id.btnSubmit)
+
+        btnCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        btnSubmit.setOnClickListener {
+            val etScore = dialogView.findViewById<EditText>(R.id.etScore)
+            val score = etScore.text.toString().toIntOrNull()
+
+            if (score != null && score in 1..10) {
+                markScore(score)
+            } else {
+                Toast.makeText(requireContext(), "Invalid score entered", Toast.LENGTH_SHORT).show()
+            }
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+
     private fun resumeProject() {
         viewModel.resumeProject()
     }
@@ -136,6 +186,9 @@ class InChargeFragment : BaseFragment<FragmentInChargeBinding, InChargeViewModel
             show()
         }
         viewModel.cancelProject()
+    }
+
+    private fun markScore(score: Int) {
     }
 
     companion object {

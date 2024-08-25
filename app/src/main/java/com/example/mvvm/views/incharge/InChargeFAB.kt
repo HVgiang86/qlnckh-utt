@@ -58,6 +58,14 @@ fun getInChargeFAB(state: ProjectState, role: UserRole): InChargeFAB? {
         ProjectState.CANCELLED -> {
             return null
         }
+
+        ProjectState.PENDING -> {
+            if (role == UserRole.RESEARCHER) {
+                return null
+            } else if (role == UserRole.SUPERVISOR) {
+                return InChargeFAB.REVIEW
+            }
+        }
     }
     return null
 }

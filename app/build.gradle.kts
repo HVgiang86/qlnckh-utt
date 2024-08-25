@@ -34,10 +34,10 @@ android {
     productFlavors {
         create("dev") {
             applicationIdSuffix = ".dev"
-            resValue("string", "app_name", "MVVM Dev")
+            resValue("string", "app_name", "QLNCKH Dev")
         }
         create("prd") {
-            resValue("string", "app_name", "MVVM")
+            resValue("string", "app_name", "QLNCKH")
         }
     }
 
@@ -53,7 +53,7 @@ android {
     buildTypes {
         getByName("debug") {
             isDebuggable = true
-            resValue("string", "app_name", "WSM-Dev")
+            resValue("string", "app_name", "QLNCKH UTT-Dev")
         }
         getByName("release") {
             isDebuggable = false
@@ -158,4 +158,9 @@ dependencies {
     implementation(Deps.retrofit_runtime) {
         exclude(module = "okhttp")
     }
+
+    // File Picker
+    // file picker
+    implementation("io.github.chochanaresh:filepicker:0.1.9")
+    implementation("com.github.mahdiasd:BottomDialogFilePicker:3.0.4")
 }

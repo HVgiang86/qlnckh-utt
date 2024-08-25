@@ -11,6 +11,7 @@ fun ProjectState.getStateName() = when (this) {
     ProjectState.PAUSED -> "Tạm dừng"
     ProjectState.COMPLETED -> "Hoàn thành"
     ProjectState.CANCELLED -> "Đã huỷ"
+    ProjectState.PENDING -> "Chờ duyệt"
 }
 
 fun ProjectState.getStateTagBackground() = when (this) {
@@ -21,4 +22,5 @@ fun ProjectState.getStateTagBackground() = when (this) {
     ProjectState.PAUSED -> R.drawable.bg_status_pause
     ProjectState.COMPLETED -> R.drawable.bg_status_complete
     ProjectState.CANCELLED -> R.drawable.bg_status_cancel
+    ProjectState.PENDING -> R.drawable.bg_status_pending
 }
