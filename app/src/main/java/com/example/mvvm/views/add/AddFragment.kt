@@ -82,6 +82,7 @@ class AddFragment : BaseFragment<FragmentAddBinding, AddViewModel>() {
     }
 
     override fun initialize() {
+        setUp()
     }
 
     private fun pickFile() {
@@ -153,7 +154,7 @@ class AddFragment : BaseFragment<FragmentAddBinding, AddViewModel>() {
 
     fun setUp() {
         val type = arguments?.getInt(KEY_TYPE, 0)
-        val projectId: Long? = arguments?.getLong("projectId", 0L)
+        val projectId: Long? = arguments?.getLong(KEY_PROJECT_ID, 0L)
         setupUI(type ?: 0)
 
         setupObserver()
@@ -312,10 +313,10 @@ class AddFragment : BaseFragment<FragmentAddBinding, AddViewModel>() {
         const val KEY_PROJECT_ID = "project_id"
         const val TYPE_ADD_PROJECT = 1
         const val TYPE_ADD_REPORT = 2
-        fun newInstance(type: Int, projectId: Int?) = AddFragment().apply {
+        fun newInstance(type: Int, projectId: Long?) = AddFragment().apply {
             arguments = Bundle().apply {
                 putInt(KEY_TYPE, type)
-                projectId?.let { putInt(KEY_PROJECT_ID, it) }
+                projectId?.let { putLong(KEY_PROJECT_ID, it) }
             }
         }
     }

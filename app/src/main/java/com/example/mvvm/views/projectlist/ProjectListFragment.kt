@@ -12,6 +12,7 @@ import com.example.mvvm.domain.Project
 import com.example.mvvm.utils.ext.addFragment
 import com.example.mvvm.utils.ext.gone
 import com.example.mvvm.utils.ext.visible
+import com.example.mvvm.views.add.AddFragment
 import com.example.mvvm.views.projectdetail.ProjectDetailFragment
 import com.example.mvvm.views.projectlist.adapter.ProjectListAdapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -88,7 +89,7 @@ class ProjectListFragment : BaseFragment<FragmentProjectBinding, ProjectListView
         }
 
         viewBinding.fab.setOnClickListener {
-
+            addFragment(R.id.container, AddFragment.newInstance(1, null), addToBackStack = true)
         }
 
         viewModel.getAllProject()

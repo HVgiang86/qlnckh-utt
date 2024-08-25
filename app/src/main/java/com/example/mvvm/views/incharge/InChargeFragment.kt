@@ -14,10 +14,13 @@ import com.example.mvvm.R
 import com.example.mvvm.base.BaseFragment
 import com.example.mvvm.databinding.FragmentInChargeBinding
 import com.example.mvvm.domain.UserRole
+import com.example.mvvm.utils.ext.addFragment
 import com.example.mvvm.utils.ext.getStateName
 import com.example.mvvm.utils.ext.getStateTagBackground
 import com.example.mvvm.utils.ext.gone
 import com.example.mvvm.utils.ext.visible
+import com.example.mvvm.views.add.AddFragment
+import com.example.mvvm.views.assign.AssignFragment
 import com.example.mvvm.views.incharge.adapter.DocumentAdapter
 import com.example.mvvm.views.incharge.adapter.ResearcherReportAdapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -137,7 +140,7 @@ class InChargeFragment : BaseFragment<FragmentInChargeBinding, InChargeViewModel
     }
 
     private fun addReport() {
-        // TODO Add
+        addFragment(R.id.container, AddFragment.newInstance(2, viewModel.inCharge.value?.id), addToBackStack = true)
     }
 
     private fun cancelProject() {
