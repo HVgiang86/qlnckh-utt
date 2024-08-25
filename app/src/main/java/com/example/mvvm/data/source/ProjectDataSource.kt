@@ -1,10 +1,12 @@
 package com.example.mvvm.data.source
 
 import com.example.mvvm.data.source.api.MyApi
+import com.example.mvvm.data.source.api.model.request.NewAttachmentRequest
 import com.example.mvvm.data.source.api.model.request.NewProjectRequest
 import com.example.mvvm.data.source.api.model.request.NewReportRequest
 import com.example.mvvm.datacore.BaseDataSource
 import com.example.mvvm.datacore.DataResult
+import com.example.mvvm.domain.Document
 import com.example.mvvm.domain.Project
 import com.example.mvvm.domain.ProjectState
 import com.example.mvvm.domain.Researcher
@@ -22,6 +24,9 @@ interface ProjectDataSource {
     suspend fun setUnderReview(projectId: Long): DataResult<Project>
     suspend fun setPauseOrResume(projectId: Long): DataResult<Project>
     suspend fun setCancel(projectId: Long): DataResult<Project>
+
+    suspend fun addAttachmentToProject(projectId: Long, name: String, url: String): DataResult<Document>
+    suspend fun addAttachmentToReport(reportId: Long, name: String, url: String): DataResult<Document>
 }
 
 class ProjectDataSourceImpl
@@ -178,6 +183,30 @@ class ProjectDataSourceImpl
                 return DataResult.Success(r.successfully.toProject())
             }
             return DataResult.Error(Exception("Set Cancel Fail"))
+        }
+        return DataResult.Error(Exception("No project found"))
+    }
+
+    override suspend fun addAttachmentToProject(projectId: Long, name: String, url: String): DataResult<Document> {
+        val response = api.addAttachmentToProject(projectId, NewAttachmentRequest(name, url))
+        if (response.isSuccessful) {
+            val r = response.body()
+            if (r != null) {
+                return DataResult.Success(r.successfully)
+            }
+            return DataResult.Error(Exception("Add Attachment Fail"))
+        }
+        return DataResult.Error(Exception("No project found"))
+    }
+
+    override suspend fun addAttachmentToReport(reportId: Long, name: String, url: String): DataResult<Document> {
+        val response = api.addAttachmentToReport(reportId, NewAttachmentRequest(name, url))
+        if (response.isSuccessful) {
+            val r = response.body()
+            if (r != null) {
+                return DataResult.Success(r.successfully)
+            }
+            return DataResult.Error(Exception("Add Attachment Fail"))
         }
         return DataResult.Error(Exception("No project found"))
     }

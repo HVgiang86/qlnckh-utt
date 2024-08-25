@@ -260,6 +260,7 @@ class AddFragment : BaseFragment<FragmentAddBinding, AddViewModel>() {
         }
 
         val report = ResearcherReport(
+            genId(),
             title,
             Date(),
             content = content,

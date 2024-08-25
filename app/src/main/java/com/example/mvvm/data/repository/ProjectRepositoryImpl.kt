@@ -64,4 +64,12 @@ class ProjectRepositoryImpl
     override suspend fun setCancel(projectId: Long) = runFlow {
         remote.setCancel(projectId)
     }
+
+    override suspend fun addAttachmentToProject(projectId: Long, name: String, url: String) = runFlow {
+        remote.addAttachmentToProject(projectId, name, url)
+    }
+
+    override suspend fun addAttachmentToReport(reportId: Long, name: String, url: String) = runFlow {
+        remote.addAttachmentToReport(reportId, name, url)
+    }
 }
