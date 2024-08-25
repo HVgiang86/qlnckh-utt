@@ -8,17 +8,11 @@ import java.util.Date
 
 @Parcelize
 data class ResearcherReport(
-    @Expose
-    val title: String? = "",
-    @Expose
-    @SerializedName("create_date")
-    val date: Date? = null,
-    @Expose
-    val content: String? = "",
-    @Expose
-    val reporter: String? = null,
-    @Expose
-    @SerializedName("documents")
-    val file: List<Document>? = emptyList(),
+    @Expose val id: Long,
+    @Expose val title: String? = "",
+    @Expose @SerializedName("create_date") val date: Date? = null,
+    @Expose val content: String? = "",
+    @Expose val reporter: String? = null,
+    @Expose @SerializedName("documents") val file: List<Document>? = emptyList(),
     val supervisorComments: List<SupervisorComment>? = emptyList(),
 ) : Parcelable

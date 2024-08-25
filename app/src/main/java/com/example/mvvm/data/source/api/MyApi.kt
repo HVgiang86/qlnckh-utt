@@ -2,6 +2,7 @@ package com.example.mvvm.data.source.api
 
 import com.example.mvvm.data.source.api.model.request.CouncilRequest
 import com.example.mvvm.data.source.api.model.request.LoginRequest
+import com.example.mvvm.data.source.api.model.request.NewAttachmentRequest
 import com.example.mvvm.data.source.api.model.request.NewProjectRequest
 import com.example.mvvm.data.source.api.model.request.NewReportRequest
 import com.example.mvvm.data.source.api.model.request.ResearcherReg
@@ -10,9 +11,10 @@ import com.example.mvvm.data.source.api.model.request.UpdateProfileRequest
 import com.example.mvvm.data.source.api.model.response.BaseResponse
 import com.example.mvvm.data.source.api.model.response.LoginResponse
 import com.example.mvvm.data.source.api.model.response.ProfileResponse
-import com.example.mvvm.domain.GetListResearcherSupervisorResponse
+import com.example.mvvm.domain.Document
 import com.example.mvvm.domain.ProjectResponse
 import com.example.mvvm.domain.Researcher
+import com.example.mvvm.domain.ResearcherSupervisor
 import com.example.mvvm.domain.Supervisor
 import retrofit2.Response
 import retrofit2.http.Body
@@ -120,4 +122,16 @@ interface MyApi {
     suspend fun setCancel(
         @Path("topicId") topicId: Long,
     ): Response<BaseResponse<ProjectResponse>>
+
+    @POST("topics/attachment/{topicId}")
+    suspend fun addAttachmentToProject(
+        @Path("topicId") topicId: Long,
+        @Body body: NewAttachmentRequest,
+    ): Response<BaseResponse<Document>>
+
+    @POST("reports/attachment/{reportId}")
+    suspend fun addAttachmentToReport(
+        @Path("reportId") reportId: Long,
+        @Body body: NewAttachmentRequest,
+    ): Response<BaseResponse<Document>>
 }
