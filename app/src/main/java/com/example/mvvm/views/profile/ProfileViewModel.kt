@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.example.mvvm.base.BaseViewModel
 import com.example.mvvm.data.UserRepository
 import com.example.mvvm.data.source.api.model.request.UpdateProfileRequest
+import com.example.mvvm.data.source.api.model.response.ProfileResponse
 import com.example.mvvm.domain.Researcher
 import com.example.mvvm.domain.Supervisor
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,8 +20,10 @@ class ProfileViewModel
     constructor(val userRepository: UserRepository) : BaseViewModel() {
         private val _profileResearcher = MutableLiveData<Researcher>()
         private val _profileSupervisor = MutableLiveData<Supervisor>()
+        private val _profileAdmin = MutableLiveData<ProfileResponse>()
         val profileResearcher: LiveData<Researcher> = _profileResearcher
         val profileSuperVisor: LiveData<Supervisor> = _profileSupervisor
+        val profileAdmin: LiveData<ProfileResponse> = _profileAdmin
 
         fun getProfile() {
             runFlow(Dispatchers.IO) {
@@ -31,6 +34,8 @@ class ProfileViewModel
                         _profileResearcher.postValue(it.getResearcher())
                     } else if (it.isSupervisor()) {
                         _profileSupervisor.postValue(it.getSupervisor())
+                    } else {
+                        _profileAdmin.postValue(it)
                     }
                 }
             }

@@ -2,10 +2,13 @@ package com.example.mvvm.views.profile
 
 import android.app.DatePickerDialog
 import android.view.LayoutInflater
+import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import com.example.mvvm.base.BaseFragment
 import com.example.mvvm.data.source.api.model.request.UpdateProfileRequest
 import com.example.mvvm.databinding.FragmentProfileBinding
+import com.example.mvvm.utils.ext.isVisible
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Calendar
 
@@ -17,9 +20,13 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
         return FragmentProfileBinding.inflate(inflater)
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.getProfile()
+    }
+
     override fun initialize() {
         registerLiveData()
-        viewModel.getProfile()
 
         viewBinding.layoutBirthday.setOnClickListener {
             openPickDate { day, month, year ->
@@ -49,8 +56,22 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
             viewBinding.edtStudentCodeTitle.setText(it.title ?: "")
         }
 
+        viewModel.profileAdmin.observe(viewLifecycleOwner) {
+            viewBinding.edtName.setText(it.fullName)
+            viewBinding.edtEmail.setText(it.email)
+            viewBinding.tvDate.text = it.dateOfBirth
+            viewBinding.edtFaculty.setText(it.phoneNumber ?: "")
+            viewBinding.edtClassDepartment.visibility = View.GONE
+            viewBinding.edtStudentCodeTitle.visibility = View.GONE
+        }
+
         viewBinding.topAppBar.menu.getItem(0).setOnMenuItemClickListener {
-            val email = viewModel.profileResearcher.value?.email ?: viewModel.profileSuperVisor.value?.email ?: ""
+            val email = if(!viewModel.profileResearcher.value?.email.isNullOrEmpty()) {
+                viewModel.profileResearcher.value?.email
+            } else {
+                viewModel.profileSuperVisor.value?.email
+            }
+
             val request = UpdateProfileRequest(
                 fullName = viewBinding.edtName.text.toString(),
                 birthday = viewBinding.tvDate.text.toString(),
@@ -58,11 +79,13 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
                 department = viewBinding.edtClassDepartment.text.toString(),
                 title = viewBinding.edtStudentCodeTitle.text.toString(),
                 major = viewBinding.edtFaculty.text.toString(),
-                className = viewBinding.edtClassDepartment.text.toString(),
+                className = viewBinding.edtClassDepartment.text.toString() ?: "123",
             )
 
-            if (email.isNotEmpty()) {
+            if (email!!.isNotEmpty()) {
                 viewModel.updateProfile(email, request)
+            } else {
+                Toast.makeText(requireContext(), "Cập nhật thất bại", Toast.LENGTH_LONG).show()
             }
 
             true
