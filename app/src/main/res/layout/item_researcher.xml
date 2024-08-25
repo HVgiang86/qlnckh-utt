@@ -8,6 +8,7 @@
 
     <!-- CardView for User Information -->
     <androidx.cardview.widget.CardView
+        android:id="@+id/container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:cardElevation="4dp"

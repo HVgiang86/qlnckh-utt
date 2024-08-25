@@ -19,7 +19,7 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/containerResearcherSupervisor"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -29,11 +29,14 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <TextView
+            android:id="@+id/tvNameResearch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Research"
             android:fontFamily="@font/open_sans_bold"
-            android:textSize="18sp"/>
+            android:textSize="18sp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rev_researcher"
@@ -41,15 +44,20 @@
             android:layout_height="wrap_content"
             tools:listitem="@layout/item_researcher"
             android:layout_marginTop="10dp"
-            tools:itemCount="1"/>
+            tools:itemCount="1"
+            app:layout_constraintTop_toBottomOf="@+id/tvNameResearch"
+            app:layout_constraintStart_toStartOf="parent"/>
 
         <TextView
+            android:id="@+id/tvNameSupervisor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Supervisor"
             android:fontFamily="@font/open_sans_bold"
             android:textSize="18sp"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toBottomOf="@id/rev_researcher"
+            app:layout_constraintStart_toStartOf="parent"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rev_supervisor"
@@ -57,9 +65,20 @@
             android:layout_height="wrap_content"
             tools:listitem="@layout/item_researcher"
             android:layout_marginTop="10dp"
-            tools:itemCount="1"/>
+            tools:itemCount="1"
+            app:layout_constraintTop_toBottomOf="@+id/tvNameSupervisor"
+            app:layout_constraintStart_toStartOf="parent"/>
 
-    </LinearLayout>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:src="@android:drawable/ic_input_add"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
         android:id="@+id/containerNoInCharge"

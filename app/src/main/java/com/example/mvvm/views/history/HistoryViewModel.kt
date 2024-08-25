@@ -29,32 +29,35 @@ class HistoryViewModel
     constructor(private val projectRepository: ProjectRepository,
                 private val userRepository: UserRepository,
                 private val api: MyApi) : BaseViewModel() {
-        private val _projects = MutableLiveData<List<Project>>()
-        val projects: LiveData<List<Project>>
-            get() = _projects
+    private val _projects = MutableLiveData<List<Project>>()
+    val projects: LiveData<List<Project>>
+        get() = _projects
 
-        private val _profile = MutableLiveData<ProfileResponse>()
-        val profile: LiveData<ProfileResponse> = _profile
+    private val _profile = MutableLiveData<ProfileResponse>()
+    val profile: LiveData<ProfileResponse> = _profile
 
-        private val _getListResearch = MutableLiveData<Map<String, List<ResearcherSupervisor>>>()
-        val getListResearch: LiveData<Map<String, List<ResearcherSupervisor>>> = _getListResearch
+    private val _getListResearch = MutableLiveData<Map<String, List<ResearcherSupervisor>>>()
+    val getListResearch: LiveData<Map<String, List<ResearcherSupervisor>>> = _getListResearch
 
-        private val _getListSupervisor = MutableLiveData<Map<String, List<ResearcherSupervisor>>>()
-        val getListSupervisor: LiveData<Map<String, List<ResearcherSupervisor>>> = _getListSupervisor
+    private val _getListSupervisor = MutableLiveData<Map<String, List<ResearcherSupervisor>>>()
+    val getListSupervisor: LiveData<Map<String, List<ResearcherSupervisor>>> = _getListSupervisor
 
-        fun getHistory() {
-            runFlow(Dispatchers.IO) {
-                if (AppState.userRole == UserRole.SUPERVISOR) {
-                    projectRepository.getProjectHistorySupervisor(AppState.userId).collect {
-                        _projects.postValue(it)
-                    }
-                } else if (AppState.userRole == UserRole.RESEARCHER) {
-                    projectRepository.getProjectHistoryResearcher(AppState.userId).collect {
-                        _projects.postValue(it)
-                    }
+    private val _delete = MutableLiveData<Unit>()
+    val delete: LiveData<Unit> = _delete
+
+    fun getHistory() {
+        runFlow(Dispatchers.IO) {
+            if (AppState.userRole == UserRole.SUPERVISOR) {
+                projectRepository.getProjectHistorySupervisor(AppState.userId).collect {
+                    _projects.postValue(it)
+                }
+            } else if (AppState.userRole == UserRole.RESEARCHER) {
+                projectRepository.getProjectHistoryResearcher(AppState.userId).collect {
+                    _projects.postValue(it)
                 }
             }
         }
+    }
 
     fun getProfile() {
         runFlow(Dispatchers.IO) {
@@ -69,9 +72,9 @@ class HistoryViewModel
         viewModelScope.launch {
             try {
                 val response = api.getResearchSupervisor(type)
-                if(type == Role.RESEARCHER.value) {
+                if (type == Role.RESEARCHER.value) {
                     _getListResearch.postValue(response)
-                } else if(type == Role.SUPERVISOR.value) {
+                } else if (type == Role.SUPERVISOR.value) {
                     _getListSupervisor.postValue(response)
                 }
             } catch (e: HttpException) {
@@ -82,5 +85,16 @@ class HistoryViewModel
         }
     }
 
-
+    fun deleteResearcherSupervisor(mail: String) {
+        viewModelScope.launch {
+            try {
+                val response = api.deleteResearchSupervisor(mail)
+                _delete.postValue(response)
+            } catch (e: HttpException) {
+                println("HTTP error: ${e.message()}")
+            } catch (e: IOException) {
+                println("Network error: ${e.message}")
+            }
+        }
     }
+}

@@ -1,5 +1,6 @@
 package com.example.mvvm.views.history
 
+import android.app.AlertDialog
 import android.view.LayoutInflater
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -35,8 +36,28 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding, HistoryViewModel>()
         researcherList = mutableListOf()
         supervisorList = mutableListOf()
 
-        researcherAdapter = ResearcherSupervisorAdapter(researcherList)
-        supervisorAdapter = ResearcherSupervisorAdapter(supervisorList)
+        researcherAdapter = ResearcherSupervisorAdapter(researcherList) {
+            AlertDialog.Builder(context)
+                .setTitle(Role.RESEARCHER.name)
+                .setMessage("Bạn có chắc chắn muốn sử dụng ${it.fullName}?")
+                .setPositiveButton("Xóa") { _, _ ->
+                    viewModel.deleteResearcherSupervisor(it.email)
+                }
+                .setNegativeButton("Sửa") { _, _ ->
+                }
+                .show()
+        }
+        supervisorAdapter = ResearcherSupervisorAdapter(supervisorList) {
+            AlertDialog.Builder(context)
+                .setTitle(Role.SUPERVISOR.name)
+                .setMessage("Bạn có chắc chắn muốn sử dụng ${it.fullName}?")
+                .setPositiveButton("Xóa") { _, _ ->
+                    viewModel.deleteResearcherSupervisor(it.email)
+                }
+                .setNegativeButton("Sửa") { _, _ ->
+                }
+                .show()
+        }
 
         viewBinding.revResearcher.adapter = researcherAdapter
         viewBinding.revResearcher.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
@@ -79,6 +100,11 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding, HistoryViewModel>()
                 // Comment
                 initData()
             }
+        }
+
+        viewModel.delete.observe(viewLifecycleOwner) {
+            viewModel.getListResearcherSupervisor(Role.RESEARCHER.value)
+            viewModel.getListResearcherSupervisor(Role.SUPERVISOR.value)
         }
 
         viewModel.projects.observe(viewLifecycleOwner) {

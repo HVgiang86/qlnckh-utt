@@ -82,4 +82,9 @@ interface MyApi {
     suspend fun getResearchSupervisor(
         @Path("type") type: String,
     ): Map<String, List<ResearcherSupervisor>>
+
+    @POST("users/change-status/{mail}")
+    suspend fun deleteResearchSupervisor(
+        @Path("mail") mail: String,
+    ): Unit
 }
