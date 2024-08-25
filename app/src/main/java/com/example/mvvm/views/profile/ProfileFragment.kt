@@ -66,12 +66,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
         }
 
         viewBinding.topAppBar.menu.getItem(0).setOnMenuItemClickListener {
-            val email = if(!viewModel.profileResearcher.value?.email.isNullOrEmpty()) {
-                viewModel.profileResearcher.value?.email
-            } else {
-                viewModel.profileSuperVisor.value?.email
-            }
-
+            val email = viewModel.profileResearcher.value?.email ?: viewModel.profileSuperVisor.value?.email ?: ""
             val request = UpdateProfileRequest(
                 fullName = viewBinding.edtName.text.toString(),
                 birthday = viewBinding.tvDate.text.toString(),
@@ -79,10 +74,10 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
                 department = viewBinding.edtClassDepartment.text.toString(),
                 title = viewBinding.edtStudentCodeTitle.text.toString(),
                 major = viewBinding.edtFaculty.text.toString(),
-                className = viewBinding.edtClassDepartment.text.toString() ?: "123",
+                className = viewBinding.edtClassDepartment.text.toString(),
             )
 
-            if (email!!.isNotEmpty()) {
+            if (email.isNotEmpty()) {
                 viewModel.updateProfile(email, request)
             } else {
                 Toast.makeText(requireContext(), "Cập nhật thất bại", Toast.LENGTH_LONG).show()

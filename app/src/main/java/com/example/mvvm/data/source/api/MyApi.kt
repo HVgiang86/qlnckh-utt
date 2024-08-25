@@ -8,6 +8,7 @@ import com.example.mvvm.data.source.api.model.request.UpdateProfileRequest
 import com.example.mvvm.data.source.api.model.response.BaseResponse
 import com.example.mvvm.data.source.api.model.response.LoginResponse
 import com.example.mvvm.data.source.api.model.response.ProfileResponse
+import com.example.mvvm.domain.GetListResearcherSupervisorResponse
 import com.example.mvvm.domain.ProjectResponse
 import com.example.mvvm.domain.Researcher
 import com.example.mvvm.domain.Supervisor
@@ -75,4 +76,9 @@ interface MyApi {
         @Path("id") topicId: Long,
         @Query("email") email: String,
     ): Any
+
+    @GET("users/{type}")
+    suspend fun getResearchSupervisor(
+        @Path("type") type: String,
+    ): GetListResearcherSupervisorResponse
 }
