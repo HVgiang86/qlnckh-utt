@@ -7,8 +7,6 @@ import com.example.mvvm.base.BaseViewModel
 import com.example.mvvm.data.ProjectRepository
 import com.example.mvvm.data.source.api.MyApi
 import com.example.mvvm.data.source.api.model.request.CouncilRequest
-import com.example.mvvm.di.NetworkModule
-import com.example.mvvm.domain.Researcher
 import com.example.mvvm.domain.Supervisor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -23,19 +21,33 @@ class AssignViewModel
     private val api: MyApi,
 ) : BaseViewModel() {
 
-    private val _supervisors = MutableLiveData<List<Supervisor>>()
-    val supervisors: LiveData<List<Supervisor>> get() = _supervisors
+    private val _supervisors = MutableLiveData<List<String>>()
+    val supervisors: LiveData<List<String>> get() = _supervisors
 
-    private val _allSupervisors = MutableLiveData<List<Supervisor>>()
-    val allSupervisors: LiveData<List<Supervisor>> get() = _allSupervisors
+    private val _supervisorData = MutableLiveData<List<Supervisor>>()
+    val supervisorData: LiveData<List<Supervisor>> get() = _supervisorData
 
-    private val _researchers = MutableLiveData<List<Researcher>>()
-    val researchers: LiveData<List<Researcher>> get() = _researchers
+    private val _response = MutableLiveData<Any>()
+    val response: LiveData<Any> get() = _response
+
+
+    fun removeSuperVisor(email: String) {
+        val list = _supervisors.value?.toMutableList() ?: mutableListOf()
+        list.remove(email)
+        _supervisors.value = list
+    }
+
+    fun addSuperVisor(email: String) {
+        val list = _supervisors.value?.toMutableList() ?: mutableListOf()
+        list.add(email)
+        _supervisors.value = list
+    }
 
     fun getAllSupervisor() {
         viewModelScope.launch {
             try {
-                val response = api.getUserByRole("")
+                val response = api.getUserByRole("supervisor")
+                _supervisorData.value = response.body()?.successfully
             } catch (e: HttpException) {
                 // Handle HTTP exception
                 println("HTTP error: ${e.message()}")
@@ -47,9 +59,12 @@ class AssignViewModel
     }
 
     fun approveProject(topicId: Long) {
+        val emails = _supervisors.value ?: emptyList()
+
         viewModelScope.launch {
             try {
-                val response = api.approveProject(topicId, "gv1@gmail.com")
+                val response = api.approveProject(topicId, emails.getOrElse(0){""})
+                _response.value = response
             } catch (e: HttpException) {
                 // Handle HTTP exception
                 println("HTTP error: ${e.message()}")
@@ -61,7 +76,7 @@ class AssignViewModel
     }
 
     fun assignProject(topicId: Long, time: String) {
-        val emails = _supervisors.value?.map { it.email } ?: emptyList()
+        val emails = _supervisors.value ?: emptyList()
 
         val councilRequest = CouncilRequest(
             lecturer1Email = emails.getOrNull(0),
@@ -74,6 +89,7 @@ class AssignViewModel
             try {
                 val response = api.setCouncil(topicId, councilRequest)
                 val res = api.setProjectTime(topicId, time)
+                _response.value = res
             } catch (e: HttpException) {
                 // Handle HTTP exception
                 println("HTTP error: ${e.message()}")

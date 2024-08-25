@@ -18,14 +18,21 @@ class ItemAdapter(
 ) : RecyclerView.Adapter<BaseViewHolder<ViewBinding>>() {
 
     private val items = mutableListOf<Item>()
+    private var type = 1;
 
     @SuppressLint("NotifyDataSetChanged")
     fun setItems(newItems: List<Item>, title: String) {
         items.clear()
         items.addAll(newItems)
         items.add(0, Item.TitleItem(title))
-        items.add(Item.AddItem)
+        if (newItems.isEmpty() || type == 2) {
+            items.add(Item.AddItem)
+        }
         notifyDataSetChanged()
+    }
+
+    fun setType (type: Int) {
+        this.type = type
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<ViewBinding> {
@@ -53,7 +60,7 @@ class ItemAdapter(
     override fun getItemViewType(position: Int): Int {
         return when (items[position]) {
             is Item.TitleItem -> TYPE_TITLE
-            is Item.SuperVisorItem, is Item.ResearcherItem -> TYPE_NEW_ITEM
+            is Item.SuperVisorItem -> TYPE_NEW_ITEM
             is Item.AddItem -> TYPE_ADD
         }
     }
@@ -72,7 +79,7 @@ class ItemAdapter(
             (item as Item).let { itm ->
                 binding.imgIcon.setImageResource(
                     when (itm) {
-                        is Item.ResearcherItem, is Item.SuperVisorItem -> {
+                        is Item.SuperVisorItem -> {
                             R.drawable.ic_cancel
                         }
 
@@ -93,7 +100,7 @@ class ItemAdapter(
                         }
                     }
 
-                    is Item.ResearcherItem, is Item.SuperVisorItem -> {
+                    is Item.SuperVisorItem -> {
                         binding.imgIcon.setOnClickListener {
                             onClickRemove(itm)
                         }
@@ -114,8 +121,7 @@ class ItemAdapter(
 }
 
 sealed class Item(val content: String) {
-    data class SuperVisorItem(val supervisor: Supervisor) : Item(supervisor.name.toString())
-    data class ResearcherItem(val researcher: Researcher) : Item(researcher.name.toString())
+    data class SuperVisorItem(val supervisor: String) : Item(supervisor)
     data class TitleItem(val title: String) : Item(title)
     data object AddItem : Item("Add")
 }

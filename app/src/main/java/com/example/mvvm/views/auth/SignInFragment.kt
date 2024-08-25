@@ -88,7 +88,7 @@ class SignInFragment : BaseFragment<FragmentSignInBinding, AuthViewModel>() {
 //            viewBinding.edtPassword.setText("")
 //            return
 //        }
-//        viewModel.signIn(email, pass)
-        viewModel.signIn("sv3@gmail.com", "123456")
+        viewModel.signIn(email, pass)
+//        viewModel.signIn("sv3@gmail.com", "123456")
     }
 }

@@ -7,7 +7,7 @@ enum class ProjectListFAB {
     PROPOSED,
 }
 
-fun getProjectListFAB(role: UserRole): ProjectListFAB {
+fun getProjectListFAB(role: UserRole): ProjectListFAB? {
     return when (role) {
         UserRole.RESEARCHER -> {
             ProjectListFAB.PROPOSED
@@ -17,8 +17,6 @@ fun getProjectListFAB(role: UserRole): ProjectListFAB {
             ProjectListFAB.PROPOSED
         }
 
-        UserRole.ADMIN -> {
-            ProjectListFAB.NEW
-        }
+        UserRole.ADMIN -> null
     }
 }

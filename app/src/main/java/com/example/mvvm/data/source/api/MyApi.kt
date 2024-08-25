@@ -56,7 +56,7 @@ interface MyApi {
     @GET("users/{role}")
     suspend fun getUserByRole(
         @Path("role") role: String,
-    ): List<Supervisor>
+    ): Response<BaseResponse<List<Supervisor>>>
 
     @POST("topics/council/set-project-time/{id}")
     suspend fun setProjectTime(

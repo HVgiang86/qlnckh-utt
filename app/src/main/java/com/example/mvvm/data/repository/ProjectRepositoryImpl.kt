@@ -33,7 +33,7 @@ class ProjectRepositoryImpl
             return flowOf(emptyList())
         }
 
-        override suspend fun addResearcherReport(report: ResearcherReport, projectId: Int) {
+        override suspend fun addResearcherReport(report: ResearcherReport, projectId: Long) {
         }
 
         override suspend fun addProject(project: Project) {

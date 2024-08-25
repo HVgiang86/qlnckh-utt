@@ -39,6 +39,10 @@ class ProjectListFragment : BaseFragment<FragmentProjectBinding, ProjectListView
             ProjectListFAB.PROPOSED -> {
                 viewBinding.fab.text = "Đề xuất"
             }
+
+            null -> {
+                viewBinding.fab.gone()
+            }
         }
     }
 
@@ -84,10 +88,7 @@ class ProjectListFragment : BaseFragment<FragmentProjectBinding, ProjectListView
         }
 
         viewBinding.fab.setOnClickListener {
-//            Intent(activity, AddActivity::class.java).apply {
-//                putExtra("type", AddActivity.TYPE_ADD_PROJECT)
-//                startActivity(this)
-//            }
+
         }
 
         viewModel.getAllProject()
