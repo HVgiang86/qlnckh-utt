@@ -13,5 +13,9 @@ interface TokenDataSource {
         fun saveCookie(cookie: String)
 
         fun clearCookie()
+
+        fun getLoginState(): Boolean
+
+        fun setLoginState(state: Boolean)
     }
 }

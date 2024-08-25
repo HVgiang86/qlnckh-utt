@@ -60,6 +60,7 @@ class SignInFragment : BaseFragment<FragmentSignInBinding, AuthViewModel>() {
                 AppState.userRole = it
                 AppState.logined = true
                 showMessage("Đăng nhập thành công!", BGType.BG_TYPE_SUCCESS)
+                viewModel.saveLoginState(true)
                 addClearBackStackFragment(R.id.container, HomeFragment.newInstance())
             }
         }

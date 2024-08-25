@@ -5,10 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import com.example.mvvm.R
+import com.example.mvvm.base.BGType
 import com.example.mvvm.base.BaseFragment
 import com.example.mvvm.data.source.api.model.request.UpdateProfileRequest
 import com.example.mvvm.databinding.FragmentProfileBinding
-import com.example.mvvm.utils.ext.isVisible
+import com.example.mvvm.utils.ext.addClearBackStackFragment
+import com.example.mvvm.views.auth.SignInFragment
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Calendar
 
@@ -65,6 +68,13 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
             viewBinding.edtStudentCodeTitle.visibility = View.GONE
         }
 
+        viewModel.loggedOut.observe(viewLifecycleOwner) {
+            if (it) {
+                showMessage("Đăng xuất thành công", BGType.BG_TYPE_SUCCESS)
+                addClearBackStackFragment(R.id.container, SignInFragment.newInstance())
+            }
+        }
+
         viewBinding.topAppBar.menu.getItem(0).setOnMenuItemClickListener {
             val email = viewModel.profileResearcher.value?.email ?: viewModel.profileSuperVisor.value?.email ?: ""
             val request = UpdateProfileRequest(
@@ -83,6 +93,11 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
                 Toast.makeText(requireContext(), "Cập nhật thất bại", Toast.LENGTH_LONG).show()
             }
 
+            true
+        }
+
+        viewBinding.topAppBar.menu.getItem(1).setOnMenuItemClickListener {
+            viewModel.logout()
             true
         }
     }

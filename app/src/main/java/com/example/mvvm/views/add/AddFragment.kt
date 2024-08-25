@@ -133,7 +133,7 @@ class AddFragment : BaseFragment<FragmentAddBinding, AddViewModel>() {
             uploadTask.addOnFailureListener {
                 it.printStackTrace()
                 Timber.d("Upload fail")
-                showLoading()
+                hideLoading()
             }
 
             uploadTask.addOnSuccessListener {
@@ -141,10 +141,10 @@ class AddFragment : BaseFragment<FragmentAddBinding, AddViewModel>() {
                     Timber.d("File URL: $it")
                     files[fileName] = it.toString()
                     documentAdapter.setItems(listOf(Item.DocumentItem(Document(fileName, it.toString(), Date().toGMTString()))), fileName)
-                    showLoading()
+                    hideLoading()
                 }.addOnFailureListener {
                     it.printStackTrace()
-                    showLoading()
+                    hideLoading()
                 }
             }
         } catch (e: Exception) {
