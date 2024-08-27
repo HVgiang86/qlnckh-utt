@@ -1,4 +1,3 @@
-// gkc_hash_code : 01DN6FJSFFGTXH1JEW3NGB0MX5
 @Suppress("unused")
 object Versions {
     // Build tools
