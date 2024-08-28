@@ -113,6 +113,8 @@ class ExtendRegisterFragment : BaseFragment<FragmentExtendRegisterBinding, AuthV
     }
 
     private fun onClickSignUp() {
+        println("DEBUG on reg click once")
+
         val studentCodeTitle = viewBinding.edtStudentCodeTitle.text?.trim().toString()
         val classDepartment = viewBinding.edtClassDepartment.text?.trim().toString()
         val faculty = viewBinding.edtFaculty.text?.trim().toString()

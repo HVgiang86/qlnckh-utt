@@ -27,6 +27,14 @@ sealed class DataResult<out R> {
         }
     }
 
+    inline fun <M> filter(block: (R) -> Boolean): DataResult<R> {
+        return when (this) {
+            is Success -> if (block(data)) this else Error(Exception("Data not match the condition"))
+            is Error -> this
+            is Loading -> this
+        }
+    }
+
     inline fun <M> mapWithoutResult(success: (R) -> M): M? {
         return when (this) {
             is Success -> success(data)

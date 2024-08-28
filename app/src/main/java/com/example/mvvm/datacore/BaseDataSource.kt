@@ -1,53 +1,18 @@
 package com.example.mvvm.datacore
 
-import com.example.mvvm.data.source.api.model.response.BaseResponse
+import android.accounts.NetworkErrorException
 import com.example.mvvm.di.IODispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.withContext
+import com.google.gson.Gson
+import okhttp3.ResponseBody
+import retrofit2.HttpException
 import retrofit2.Response
 import javax.inject.Inject
-import kotlin.coroutines.CoroutineContext
 
 abstract class BaseDataSource {
     @Inject
     lateinit var dispatchersProvider: IODispatcher
 
-    protected suspend fun <R> withResultContext(
-        context: CoroutineContext = dispatchersProvider.dispatcher(),
-        requestBlock: suspend CoroutineScope.() -> R,
-        errorBlock: (suspend CoroutineScope.(Exception) -> DataResult.Error)? = null,
-    ): DataResult<R> = withContext(context) {
-        return@withContext try {
-            val response = requestBlock()
-            DataResult.Success(response)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return@withContext errorBlock?.invoke(this, e) ?: DataResult.Error(e)
-        }
-    }
-
     protected fun getContext() = dispatchersProvider
-
-    protected suspend fun <R> withResultContext(
-        context: CoroutineContext = dispatchersProvider.dispatcher(),
-        requestBlock: suspend CoroutineScope.() -> R,
-    ): DataResult<R> = withResultContext(context, requestBlock, null)
-
-    protected suspend fun <R> returnResult(
-        requestBlock: suspend () -> R,
-    ): DataResult<R> {
-        return try {
-            val response = requestBlock()
-            if (response == null) {
-                DataResult.Error(Exception("Response is null"))
-            } else {
-                DataResult.Success(response)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            DataResult.Error(e)
-        }
-    }
 
     protected suspend fun <R> result(
         block: suspend () -> Response<R>,
@@ -70,25 +35,77 @@ abstract class BaseDataSource {
         }
     }
 
-    protected suspend fun <R> resultWithBase(
-        block: suspend () -> Response<BaseResponse<R>>,
+    protected suspend fun <R> returnResult(
+        block: suspend () -> BaseResponse<R>,
     ): DataResult<R> {
         try {
             val response = block.invoke()
-            if (response.isSuccessful) {
-                val result = response.body()?.successfully
-                println("[DEBUG] $result")
+            if (response.code == 200) {
+                val data = response.data
+                val message = response.message
+                println("[DEBUG] ${response.code} $message $data")
 
-                if (result == null) return DataResult.Error(Exception("Response is null"))
+                if (data == null) {
+                    if (message == null) return DataResult.Error(Exception("Unknown error"))
+                    return DataResult.Error(Exception(message))
+                }
 
-                return DataResult.Success(result)
+                return DataResult.Success(data)
+            } else if (response.code == 500) {
+                return DataResult.Error(Exception("Server error"))
             } else {
-                println("[DEBUG] ${response.code()} ${response.message()}")
-                return DataResult.Error(Exception(response.errorBody()?.string()))
+                return DataResult.Error(Exception(response.message))
             }
+        } catch (e: NetworkErrorException) {
+            e.printStackTrace()
+            return DataResult.Error(Exception("Network error"))
+        } catch (e: HttpException) {
+            e.printStackTrace()
+            val errorResponse = e.response()?.errorBody()?.getErrorResponse()
+            if (errorResponse != null) {
+                return DataResult.Error(Exception(errorResponse.message))
+            }
+
+            return DataResult.Error(e)
         } catch (e: Exception) {
             e.printStackTrace()
+            return DataResult.Error(Exception("Unknown error"))
+        }
+    }
+
+    protected suspend fun returnIfSuccess(
+        block: suspend () -> BaseResponse<*>,
+    ): DataResult<Boolean> {
+        try {
+            val response = block.invoke()
+            if (response.code == 200) {
+                val data = response.data
+                val message = response.message
+                println("[DEBUG] ${response.code} $message $data")
+
+                if (data == null) {
+                    if (message == null) return DataResult.Error(Exception("Unknown error"))
+                    return DataResult.Error(Exception(message))
+                }
+
+                return DataResult.Success(true)
+            } else if (response.code == 500) {
+                return DataResult.Error(Exception("Server error"))
+            } else {
+                return DataResult.Error(Exception(response.message))
+            }
+        } catch (e: NetworkErrorException) {
+            e.printStackTrace()
+
+            return DataResult.Error(Exception("Network error"))
+        } catch (e: Exception) {
+            e.printStackTrace()
+
             return DataResult.Error(e)
         }
     }
+}
+
+fun ResponseBody.getErrorResponse(): ErrorResponse {
+    return Gson().fromJson(this.string(), ErrorResponse::class.java)
 }

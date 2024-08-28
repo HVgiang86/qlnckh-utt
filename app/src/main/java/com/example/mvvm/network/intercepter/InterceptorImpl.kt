@@ -23,17 +23,18 @@ class InterceptorImpl
             val builder = initializeHeader(chain)
             val request = builder.build()
 
-            var response = chain.proceed(request)
+            var response: Response
+            if (request.url.toString().contains("login") || request.url.toString().contains("refresh") || request.url.toString().contains("register")) {
+                val builder1 = request.newBuilder().removeHeader(HEADER_AUTH_TOKEN)
+                val loginRequest = builder1.build()
+                response = chain.proceed(loginRequest)
+            } else {
+                response = chain.proceed(request)
 
-            if (!isRefreshToken && response.code == HttpURLConnection.HTTP_FORBIDDEN) {
-                val token = tokenRepository.getToken()
-                println("Stored Token: $token")
+                if (!isRefreshToken && response.code == HttpURLConnection.HTTP_FORBIDDEN) {
+                    val token = tokenRepository.getToken()
+                    println("Stored Token: $token")
 
-                if (request.url.toString().contains("login")) {
-                    val builder1 = request.newBuilder().removeHeader(HEADER_AUTH_TOKEN)
-                    val loginRequest = builder1.build()
-                    response = chain.proceed(loginRequest)
-                } else {
                     if (token.isNullOrEmpty()) {
                         val newRequest = initNewRequest(request, token)
                         response.close()

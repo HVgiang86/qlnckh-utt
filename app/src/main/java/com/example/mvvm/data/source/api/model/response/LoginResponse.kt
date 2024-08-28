@@ -7,13 +7,6 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class LoginResponse(
-    @Expose
-    @SerializedName("successfully")
-    val result: LoginResult,
-) : Parcelable
-
-@Parcelize
-data class LoginResult(
     @SerializedName("token")
     @Expose
     val token: String,

@@ -19,10 +19,10 @@ interface ProjectRepository {
     suspend fun addResearcherToProject(projectId: Long, researcherEmail: String): Flow<Researcher>
 
     suspend fun addReport(report: ResearcherReport, projectId: Long): Flow<Boolean>
-    suspend fun setApprove(projectId: Long): Flow<Project>
-    suspend fun setUnderReview(projectId: Long): Flow<Project>
-    suspend fun setPauseOrResume(projectId: Long): Flow<Project>
-    suspend fun setCancel(projectId: Long): Flow<Project>
+    suspend fun setApprove(projectId: Long): Flow<Boolean>
+    suspend fun setUnderReview(projectId: Long): Flow<Boolean>
+    suspend fun setPauseOrResume(projectId: Long): Flow<Boolean>
+    suspend fun setCancel(projectId: Long): Flow<Boolean>
 
     suspend fun addAttachmentToProject(projectId: Long, name: String, url: String): Flow<Document>
     suspend fun addAttachmentToReport(reportId: Long, name: String, url: String): Flow<Document>
