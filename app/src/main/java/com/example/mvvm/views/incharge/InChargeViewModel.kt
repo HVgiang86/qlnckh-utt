@@ -27,16 +27,16 @@ class InChargeViewModel
     val inCharge: LiveData<Project?> get() = _inCharge
 
     fun getInCharge() {
-        runFlow(Dispatchers.IO) {
+        runFlow {
             Timber.d("get in charge ${AppState.userId} ${AppState.userRole}")
             if (AppState.userRole == UserRole.RESEARCHER) {
-                projectRepository.getInChargeResearcher(AppState.userId).collect {
+                projectRepository.getInChargeResearcher(AppState.userId).onCompletion { hideLoading() }.collect {
                     Timber.d("get in charge $it")
                     _inCharge.postValue(it)
                     AppState.hasInChargeProject = it != null
                 }
             } else {
-                projectRepository.getInChargeSupervisor(AppState.userId).collect {
+                projectRepository.getInChargeSupervisor(AppState.userId).onCompletion { hideLoading() }.collect {
                     Timber.d("get in charge $it")
                     _inCharge.postValue(it.firstOrNull())
                     AppState.hasInChargeProject = it.isNotEmpty()
@@ -53,7 +53,7 @@ class InChargeViewModel
 
     fun cancelProject() {
         _inCharge.value = inCharge.value?.copy(state = CANCEL)
-        runFlow(Dispatchers.IO) {
+        runFlow {
             inCharge.value?.id?.let { projectRepository.setCancel(it) }?.onCompletion { hideLoading() }?.collect {
                 getInCharge()
             }
@@ -63,7 +63,7 @@ class InChargeViewModel
 
     fun pauseProject() {
         _inCharge.value = inCharge.value?.copy(state = PAUSED)
-        runFlow(Dispatchers.IO) {
+        runFlow {
             inCharge.value?.id?.let { projectRepository.setPauseOrResume(it) }?.onCompletion { hideLoading() }?.collect {
                 getInCharge()
             }
@@ -72,7 +72,7 @@ class InChargeViewModel
 
     fun resumeProject() {
         _inCharge.value = inCharge.value?.copy(state = IN_PROGRESS)
-        runFlow(Dispatchers.IO) {
+        runFlow {
             inCharge.value?.id?.let { projectRepository.setPauseOrResume(it) }?.onCompletion { hideLoading() }?.collect {
                 getInCharge()
             }
@@ -81,7 +81,7 @@ class InChargeViewModel
 
     fun markFinish() {
         _inCharge.value = inCharge.value?.copy(state = UNDER_REVIEW)
-        runFlow(Dispatchers.IO) {
+        runFlow {
             inCharge.value?.id?.let { projectRepository.setUnderReview(it) }?.onCompletion { hideLoading() }?.collect {
                 getInCharge()
             }

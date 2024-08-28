@@ -68,6 +68,8 @@ class ProjectListFragment : BaseFragment<FragmentProjectBinding, ProjectListView
 
     override fun inflateViewBinding(inflater: LayoutInflater) = FragmentProjectBinding.inflate(inflater)
     override fun initialize() {
+        viewBinding.swipeRefresh.isRefreshing = false
+        viewBinding.swipeRefresh.setEnabled(false)
         registerErrorHandler()
         lifecycleScope.launch {
             viewModel.isLoading.collect {
@@ -75,7 +77,6 @@ class ProjectListFragment : BaseFragment<FragmentProjectBinding, ProjectListView
                     showLoading()
                 } else {
                     hideLoading()
-                    viewBinding.swipeRefresh.isRefreshing = false
                 }
             }
         }

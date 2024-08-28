@@ -11,8 +11,11 @@ import com.example.mvvm.databinding.FragmentHistoryBinding
 import com.example.mvvm.domain.Project
 import com.example.mvvm.domain.ResearcherSupervisor
 import com.example.mvvm.domain.Role
+import com.example.mvvm.domain.User
+import com.example.mvvm.utils.ext.addFragmentToActivity
 import com.example.mvvm.utils.ext.gone
 import com.example.mvvm.utils.ext.visible
+import com.example.mvvm.views.profile.ProfileFragment
 import com.example.mvvm.views.projectlist.adapter.ProjectListAdapter
 import com.google.gson.JsonObject
 import dagger.hilt.android.AndroidEntryPoint
@@ -44,6 +47,7 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding, HistoryViewModel>()
                     viewModel.deleteResearcherSupervisor(it.email)
                 }
                 .setNegativeButton("Sửa") { _, _ ->
+                    addFragmentToActivity(R.id.container, ProfileFragment.newInstance(ProfileFragment.TYPE_ADMIN, it.email), true)
                 }
                 .show()
         }
@@ -55,6 +59,7 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding, HistoryViewModel>()
                     viewModel.deleteResearcherSupervisor(it.email)
                 }
                 .setNegativeButton("Sửa") { _, _ ->
+                    addFragmentToActivity(R.id.container, ProfileFragment.newInstance(ProfileFragment.TYPE_ADMIN, it.email), true)
                 }
                 .show()
         }
@@ -81,6 +86,7 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding, HistoryViewModel>()
     }
 
     override fun initialize() {
+        registerErrorHandler()
         init()
         observer()
     }
@@ -88,7 +94,7 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding, HistoryViewModel>()
     private fun observer() {
         viewModel.profile.observe(viewLifecycleOwner) { res ->
             profileResponse = res
-            if(res.role == Role.ADMIN.value) {
+            if (res.role == Role.ADMIN.value) {
                 viewBinding.topAppBar.title = getString(R.string.title_admin)
                 viewBinding.containerNoInCharge.gone()
                 viewBinding.containerHasInCharge.gone()
@@ -118,22 +124,13 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding, HistoryViewModel>()
             }
         }
 
-        viewModel.getListResearch.observe(viewLifecycleOwner) { res ->
-            try {
-                val data = res["successfully"]
-                if(!data.isNullOrEmpty()) researcherAdapter.updateData(data as MutableList<ResearcherSupervisor>)
-            }catch (e: Exception) {
-                e.printStackTrace()
-            }
+        viewModel.getListResearch.observe(viewLifecycleOwner) { data ->
+            if (!data.isNullOrEmpty()) researcherAdapter.updateData(data as MutableList<ResearcherSupervisor>)
+
         }
 
-        viewModel.getListSupervisor.observe(viewLifecycleOwner) { res ->
-            try {
-                val data = res["successfully"]
-                if(!data.isNullOrEmpty()) supervisorAdapter.updateData(data as MutableList<ResearcherSupervisor>)
-            }catch (e: Exception) {
-                e.printStackTrace()
-            }
+        viewModel.getListSupervisor.observe(viewLifecycleOwner) { data ->
+            if (!data.isNullOrEmpty()) supervisorAdapter.updateData(data as MutableList<ResearcherSupervisor>)
         }
     }
 

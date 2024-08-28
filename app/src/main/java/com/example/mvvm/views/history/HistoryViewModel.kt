@@ -14,6 +14,7 @@ import com.example.mvvm.domain.Project
 import com.example.mvvm.domain.ResearcherSupervisor
 import com.example.mvvm.domain.Role
 import com.example.mvvm.domain.UserRole
+import com.example.mvvm.domain.toResearcherSupervisor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.onCompletion
@@ -25,10 +26,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HistoryViewModel
-    @Inject
-    constructor(private val projectRepository: ProjectRepository,
-                private val userRepository: UserRepository,
-                private val api: MyApi) : BaseViewModel() {
+@Inject
+constructor(
+    private val projectRepository: ProjectRepository,
+    private val userRepository: UserRepository,
+    private val api: MyApi
+) : BaseViewModel() {
     private val _projects = MutableLiveData<List<Project>>()
     val projects: LiveData<List<Project>>
         get() = _projects
@@ -36,23 +39,23 @@ class HistoryViewModel
     private val _profile = MutableLiveData<ProfileResponse>()
     val profile: LiveData<ProfileResponse> = _profile
 
-    private val _getListResearch = MutableLiveData<Map<String, List<ResearcherSupervisor>>>()
-    val getListResearch: LiveData<Map<String, List<ResearcherSupervisor>>> = _getListResearch
+    private val _getListResearch = MutableLiveData<List<ResearcherSupervisor>>()
+    val getListResearch: LiveData<List<ResearcherSupervisor>> = _getListResearch
 
-    private val _getListSupervisor = MutableLiveData<Map<String, List<ResearcherSupervisor>>>()
-    val getListSupervisor: LiveData<Map<String, List<ResearcherSupervisor>>> = _getListSupervisor
+    private val _getListSupervisor = MutableLiveData<List<ResearcherSupervisor>>()
+    val getListSupervisor: LiveData<List<ResearcherSupervisor>> = _getListSupervisor
 
-    private val _delete = MutableLiveData<Unit>()
-    val delete: LiveData<Unit> = _delete
+    private val _delete = MutableLiveData<Boolean>()
+    val delete: LiveData<Boolean> = _delete
 
     fun getHistory() {
-        runFlow(Dispatchers.IO) {
+        runFlow {
             if (AppState.userRole == UserRole.SUPERVISOR) {
-                projectRepository.getProjectHistorySupervisor(AppState.userId).collect {
+                projectRepository.getProjectHistorySupervisor(AppState.userId).onCompletion { hideLoading() }.collect {
                     _projects.postValue(it)
                 }
             } else if (AppState.userRole == UserRole.RESEARCHER) {
-                projectRepository.getProjectHistoryResearcher(AppState.userId).collect {
+                projectRepository.getProjectHistoryResearcher(AppState.userId).onCompletion { hideLoading() }.collect {
                     _projects.postValue(it)
                 }
             }
@@ -60,7 +63,7 @@ class HistoryViewModel
     }
 
     fun getProfile() {
-        runFlow(Dispatchers.IO) {
+        runFlow{
             userRepository.getMyProfile().onCompletion { hideLoading() }.collect {
                 Timber.d("Get my profile collect $it")
                 _profile.postValue(it)
@@ -69,31 +72,35 @@ class HistoryViewModel
     }
 
     fun getListResearcherSupervisor(type: String) {
-        viewModelScope.launch {
-            try {
-                val response = api.getResearchSupervisor(type)
-                if (type == Role.RESEARCHER.value) {
-                    _getListResearch.postValue(response)
-                } else if (type == Role.SUPERVISOR.value) {
-                    _getListSupervisor.postValue(response)
-                }
-            } catch (e: HttpException) {
-                println("HTTP error: ${e.message()}")
-            } catch (e: IOException) {
-                println("Network error: ${e.message}")
+
+        if (type == Role.RESEARCHER.value) {
+            getResearcher()
+        } else if (type == Role.SUPERVISOR.value) {
+            getSupervisor()
+        }
+
+    }
+
+    private fun getResearcher() {
+        runFlow {
+            userRepository.getResearchers().onCompletion { hideLoading() }.collect {
+                _getListResearch.postValue(it.map { it1 -> it1.toResearcherSupervisor() })
+            }
+        }
+    }
+
+    private fun getSupervisor() {
+        runFlow {
+            userRepository.getSupervisors().onCompletion { hideLoading() }.collect {
+                _getListSupervisor.postValue(it.map { it1 -> it1.toResearcherSupervisor() })
             }
         }
     }
 
     fun deleteResearcherSupervisor(mail: String) {
-        viewModelScope.launch {
-            try {
-                val response = api.deleteResearchSupervisor(mail)
-                _delete.postValue(response)
-            } catch (e: HttpException) {
-                println("HTTP error: ${e.message()}")
-            } catch (e: IOException) {
-                println("Network error: ${e.message}")
+        runFlow {
+            userRepository.deleteResearcherSupervisor(mail).onCompletion { hideLoading() }.collect {
+                _delete.postValue(it)
             }
         }
     }

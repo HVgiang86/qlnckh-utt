@@ -23,7 +23,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private val inChargeFragment by lazy { InChargeFragment.newInstance() }
     private val projectListFragment by lazy { ProjectListFragment.newInstance() }
     private val historyFragment by lazy { HistoryFragment.newInstance() }
-    private val profileFragment by lazy { ProfileFragment.newInstance() }
+    private val profileFragment by lazy { ProfileFragment.newInstance(type = ProfileFragment.TYPE_PERSONAL) }
 
     override fun inflateViewBinding(inflater: LayoutInflater): FragmentHomeBinding {
         return FragmentHomeBinding.inflate(inflater)

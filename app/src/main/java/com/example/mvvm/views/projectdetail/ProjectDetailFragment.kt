@@ -84,6 +84,8 @@ class ProjectDetailFragment : BaseFragment<FragmentProjectDetailBinding, Project
 
         fabType = data.state?.let { getProjectFAB(it, AppState.userRole) }
 
+        println("fabType: $fabType")
+
         if (fabType == null) {
             viewBinding.fab.gone()
         } else {
@@ -97,10 +99,22 @@ class ProjectDetailFragment : BaseFragment<FragmentProjectDetailBinding, Project
 
         viewBinding.fab.setOnClickListener {
             when (fabType) {
-                null -> TODO()
+                null -> {}/* no-op */
                 ProjectFAB.ASSIGN -> addFragment(R.id.container, AssignFragment.newInstance(data.id, 2), addToBackStack = true)
                 ProjectFAB.APPROVE -> addFragment(R.id.container, AssignFragment.newInstance(data.id, 1), addToBackStack = true)
                 ProjectFAB.SCORE -> showMarkScoreDialog(data.id)
+                ProjectFAB.MARK_FINISH -> {
+                    val dialog = com.example.mvvm.utils.widget.AlertDialog(requireContext())
+                    dialog.title("Xác nhận")
+                    dialog.message("Bạn có chắc chắn muốn đánh dấu dự án này được phép bảo vệ?")
+                    dialog.leftButton("OK") {
+                        viewModel.markFinish(data.id)
+                    }
+                    dialog.rightButton("Hủy") {
+                        dialog.dismiss()
+                    }
+                    dialog.show()
+                }
             }
         }
     }

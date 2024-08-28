@@ -14,6 +14,8 @@ interface UserRepository {
     suspend fun registerSupervisor(registerInfo: RegisterInfo): Flow<Supervisor>
     suspend fun getMyProfile(): Flow<ProfileResponse>
     suspend fun updateProfile(email: String, request: UpdateProfileRequest): Flow<ProfileResponse>
-
     suspend fun getSupervisors(): Flow<List<Supervisor>>
+    suspend fun getResearchers(): Flow<List<Researcher>>
+    suspend fun deleteResearcherSupervisor(mail: String): Flow<Boolean>
+    suspend fun getProfileByEmail(email: String): Flow<ProfileResponse>
 }

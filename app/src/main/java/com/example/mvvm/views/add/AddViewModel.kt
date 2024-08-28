@@ -82,6 +82,7 @@ class AddViewModel
     fun addReport(report: ResearcherReport, projectId: Long) {
         runFlow(Dispatchers.IO) {
             projectRepository.addReport(report, projectId).onCompletion { hideLoading() }.collect {
+                uploadFileAddReport(report.id)
                 _addReportDone.postValue(true)
             }
         }
@@ -90,7 +91,7 @@ class AddViewModel
     fun addProject(project: Project) {
         runFlow(Dispatchers.IO) {
             projectRepository.addProject(project).onCompletion { hideLoading() }.flatMapConcat { project ->
-                uploadFileAddProject()
+                uploadFileAddProject(project.id)
                 projectRepository.addResearcherToProject(project.id, AppState.email)
             }.collect {
                 _addProjectDone.postValue(true)
@@ -98,10 +99,20 @@ class AddViewModel
         }
     }
 
-    fun uploadFileAddProject() {
+    fun uploadFileAddProject(projectId: Long) {
         runFlow(Dispatchers.IO) {
             documents.value?.forEach {
-                projectRepository.addAttachmentToProject(1, it.title, it.url).onCompletion { hideLoading() }.collect {
+                projectRepository.addAttachmentToProject(projectId, it.title, it.url).onCompletion { hideLoading() }.collect {
+                    Timber.d("Upload file success: $it")
+                }
+            }
+        }
+    }
+
+    fun uploadFileAddReport(reportId: Long) {
+        runFlow {
+            documents.value?.forEach {
+                projectRepository.addAttachmentToReport(reportId, it.title, it.url).onCompletion { hideLoading() }.collect {
                     Timber.d("Upload file success: $it")
                 }
             }

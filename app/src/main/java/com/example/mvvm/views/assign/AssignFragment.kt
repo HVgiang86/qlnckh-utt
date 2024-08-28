@@ -27,6 +27,7 @@ class AssignFragment : BaseFragment<FragmentAssignBinding, AssignViewModel>() {
     }
 
     override fun initialize() {
+        registerErrorHandler()
         setUp()
     }
 
@@ -43,7 +44,7 @@ class AssignFragment : BaseFragment<FragmentAssignBinding, AssignViewModel>() {
         })
     }
 
-    fun setUp() {
+    private fun setUp() {
 
         val type = arguments?.getInt(KEY_TYPE, 0)
         val projectId = arguments?.getLong(KEY_PROJECT_ID, 0)
@@ -95,7 +96,7 @@ class AssignFragment : BaseFragment<FragmentAssignBinding, AssignViewModel>() {
             goBackFragment()
         }
     }
-    
+
 
     private fun showSupervisorSelectionDialog(supervisors: List<Supervisor>) {
         val supervisorNames = supervisors.map { it.name }.toTypedArray()
@@ -127,7 +128,6 @@ class AssignFragment : BaseFragment<FragmentAssignBinding, AssignViewModel>() {
     private fun onSupervisorSelected(supervisor: Supervisor) {
         supervisor.email?.let { viewModel.addSuperVisor(it) }
     }
-
 
 
     @SuppressLint("SetTextI18n")

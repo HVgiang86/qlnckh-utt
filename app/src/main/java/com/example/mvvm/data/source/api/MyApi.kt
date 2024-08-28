@@ -5,6 +5,7 @@ import com.example.mvvm.data.source.api.model.request.LoginRequest
 import com.example.mvvm.data.source.api.model.request.NewAttachmentRequest
 import com.example.mvvm.data.source.api.model.request.NewProjectRequest
 import com.example.mvvm.data.source.api.model.request.NewReportRequest
+import com.example.mvvm.data.source.api.model.request.ProjectDateRequest
 import com.example.mvvm.data.source.api.model.request.ResearcherReg
 import com.example.mvvm.data.source.api.model.request.SupervisorReg
 import com.example.mvvm.data.source.api.model.request.UpdateProfileRequest
@@ -42,8 +43,16 @@ interface MyApi {
     @GET("users/profile")
     suspend fun getMyProfile(): BaseResponse<ProfileResponse>
 
+    @GET("users/get/{email}")
+    suspend fun getProfileByEmail(
+        @Path("email") email: String,
+    ): BaseResponse<ProfileResponse>
+
     @GET("users/supervisor")
     suspend fun getAllSupervisor(): BaseResponse<List<Supervisor>>
+
+    @GET("users/researcher")
+    suspend fun getAllResearcher(): BaseResponse<List<Researcher>>
 
     @GET("topics")
     suspend fun getAllProject(): BaseResponse<List<ProjectResponse>>
@@ -57,7 +66,7 @@ interface MyApi {
     suspend fun addProject(
         @Path("topicId") topicId: Long,
         @Path("researcherEmail") researcherEmail: String,
-    ): BaseResponse<ProfileResponse>
+    ): BaseResponse<List<ProfileResponse>>
 
     @POST("reports/topic/{topicId}")
     suspend fun addReport(
@@ -75,7 +84,7 @@ interface MyApi {
     suspend fun setScore(
         @Path("id") topicId: Long,
         @Query("score") score: Double,
-    ): Any
+    ): BaseResponse<Any>
 
     @GET("users/{role}")
     suspend fun getUserByRole(
@@ -85,14 +94,14 @@ interface MyApi {
     @POST("topics/council/set-project-time/{id}")
     suspend fun setProjectTime(
         @Path("id") topicId: Long,
-        @Query("date") date: String,
-    ): Any
+        @Body date: ProjectDateRequest,
+    ): BaseResponse<Any>
 
     @POST("topics/council/{id}")
     suspend fun setCouncil(
         @Path("id") topicId: Long,
         @Body request: CouncilRequest,
-    ): Any
+    ): BaseResponse<Any>
 
     @POST("topics/set-approve/{id}")
     suspend fun approveProject(
@@ -108,7 +117,7 @@ interface MyApi {
     @POST("users/change-status/{mail}")
     suspend fun deleteResearchSupervisor(
         @Path("mail") mail: String,
-    ): Unit
+    ): BaseResponse<Any>
 
     @POST("topics/set-approve/{topicId}")
     suspend fun setApprove(
@@ -134,11 +143,11 @@ interface MyApi {
     suspend fun addAttachmentToProject(
         @Path("topicId") topicId: Long,
         @Body body: NewAttachmentRequest,
-    ): BaseResponse<Document>
+    ): BaseResponse<Any>
 
     @POST("reports/attachment/{reportId}")
     suspend fun addAttachmentToReport(
         @Path("reportId") reportId: Long,
         @Body body: NewAttachmentRequest,
-    ): BaseResponse<Document>
+    ): BaseResponse<Any>
 }

@@ -1,6 +1,7 @@
 package com.example.mvvm.views.profile
 
 import android.app.DatePickerDialog
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
@@ -11,6 +12,7 @@ import com.example.mvvm.base.BaseFragment
 import com.example.mvvm.data.source.api.model.request.UpdateProfileRequest
 import com.example.mvvm.databinding.FragmentProfileBinding
 import com.example.mvvm.utils.ext.addClearBackStackFragment
+import com.example.mvvm.utils.ext.goBackFragment
 import com.example.mvvm.views.auth.SignInFragment
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Calendar
@@ -19,17 +21,42 @@ import java.util.Calendar
 class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>() {
     override val viewModel: ProfileViewModel by viewModels()
 
+    private var type = TYPE_PERSONAL
+    private var email = ""
+
     override fun inflateViewBinding(inflater: LayoutInflater): FragmentProfileBinding {
         return FragmentProfileBinding.inflate(inflater)
     }
 
     override fun onResume() {
         super.onResume()
-        viewModel.getProfile()
+
+        if (email.isEmpty())
+            viewModel.getProfile()
+        else
+            viewModel.getProfileByEmail(email)
     }
 
     override fun initialize() {
         registerErrorHandler()
+
+        println("DEBUG HEHE")
+        type = arguments?.getInt(KEY_TYPE) ?: TYPE_PERSONAL
+        if (type == TYPE_ADMIN) {
+
+
+            viewBinding.topAppBar.menu.getItem(1).isVisible = false
+            email = arguments?.getString(KEY_EMAIL) ?: ""
+
+            println("DEBUG admin $email")
+
+            if (email.isNotEmpty())
+                viewModel.getProfileByEmail(email)
+            else
+                goBackFragment()
+        } else {
+            println("DEBUG personal")
+        }
 
         viewBinding.layoutBirthday.setOnClickListener {
             openPickDate { day, month, year ->
@@ -116,6 +143,21 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
     }
 
     companion object {
-        fun newInstance() = ProfileFragment()
+        const val KEY_TYPE = "KEY_TYPE"
+        const val KEY_EMAIL = "KEY_EMAIL"
+        const val TYPE_PERSONAL = 1
+        const val TYPE_ADMIN = 2
+        fun newInstance(type: Int) = ProfileFragment().apply {
+            arguments = Bundle().apply {
+                putInt(KEY_TYPE, type)
+            }
+        }
+
+        fun newInstance(type: Int = TYPE_ADMIN, email: String) = ProfileFragment().apply {
+            arguments = Bundle().apply {
+                putInt(KEY_TYPE, type)
+                putString(KEY_EMAIL, email)
+            }
+        }
     }
 }

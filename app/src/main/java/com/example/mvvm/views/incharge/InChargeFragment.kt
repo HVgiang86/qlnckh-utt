@@ -31,6 +31,8 @@ class InChargeFragment : BaseFragment<FragmentInChargeBinding, InChargeViewModel
     }
 
     override fun initialize() {
+        viewBinding.swipeRefreshLayout.isRefreshing = false
+        viewBinding.swipeRefreshLayout.setEnabled(false)
         registerErrorHandler()
         viewModel.inCharge.observe(viewLifecycleOwner) {
             if (it == null) {
@@ -51,7 +53,6 @@ class InChargeFragment : BaseFragment<FragmentInChargeBinding, InChargeViewModel
                     showLoading()
                 } else {
                     hideLoading()
-                    viewBinding.swipeRefreshLayout.isRefreshing = false
                 }
             }
         }
@@ -59,6 +60,11 @@ class InChargeFragment : BaseFragment<FragmentInChargeBinding, InChargeViewModel
         viewBinding.swipeRefreshLayout.setOnRefreshListener {
             viewModel.getInCharge()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.getInCharge()
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")

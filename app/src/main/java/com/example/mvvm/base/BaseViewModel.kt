@@ -3,6 +3,7 @@ package com.example.mvvm.base
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -64,7 +65,7 @@ open class BaseViewModel : ViewModel() {
     }
 
     fun runFlow(
-        context: CoroutineContext,
+        context: CoroutineContext = Dispatchers.IO,
         block: suspend () -> Unit,
     ) {
         job = viewModelScope.launch(context + exceptionHandler) {

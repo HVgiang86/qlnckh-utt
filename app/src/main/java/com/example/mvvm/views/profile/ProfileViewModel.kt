@@ -28,7 +28,7 @@ class ProfileViewModel
     val loggedOut = MutableLiveData(false)
 
     fun getProfile() {
-        runFlow(Dispatchers.IO) {
+        runFlow {
             userRepository.getMyProfile().onCompletion { hideLoading() }.collect {
                 Timber.d("Get my profile collect $it")
 
@@ -43,8 +43,24 @@ class ProfileViewModel
         }
     }
 
+    fun getProfileByEmail(email: String) {
+        runFlow {
+            userRepository.getProfileByEmail(email).onCompletion { hideLoading() }.collect {
+                Timber.d("Get my profile collect $it")
+
+                if (it.isResearcher()) {
+                    _profileResearcher.postValue(it.getResearcher())
+                } else if (it.isSupervisor()) {
+                    _profileSupervisor.postValue(it.getSupervisor())
+                } else {
+                    _profileAdmin.postValue(it)
+                }
+            }
+        }
+    }
+
     fun updateProfile(email: String, request: UpdateProfileRequest) {
-        runFlow(Dispatchers.IO) {
+        runFlow {
             userRepository.updateProfile(email, request).onCompletion { hideLoading() }.collect {
                 Timber.d("Update profile collect $it")
                 getProfile()
