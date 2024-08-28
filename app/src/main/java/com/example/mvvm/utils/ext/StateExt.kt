@@ -6,7 +6,7 @@ import com.example.mvvm.domain.ProjectState
 fun ProjectState.getStateName() = when (this) {
     ProjectState.NEW -> "Mới"
     ProjectState.UNDER_REVIEW -> "Bảo vệ"
-    ProjectState.PROPOSED -> "Đề xất"
+    ProjectState.PROPOSED -> "Đề xuất"
     ProjectState.IN_PROGRESS -> "Đang thực hiện"
     ProjectState.PAUSED -> "Tạm dừng"
     ProjectState.COMPLETED -> "Hoàn thành"

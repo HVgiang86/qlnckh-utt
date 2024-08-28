@@ -30,34 +30,41 @@ class ProjectListFragment : BaseFragment<FragmentProjectBinding, ProjectListView
 
     private fun setData(data: List<Project>) {
         adapter.setData(data)
-
-        val fabType = getProjectListFAB(AppState.userRole)
-
-        if (AppState.hasInChargeProject && AppState.userRole == UserRole.RESEARCHER) {
-            viewBinding.fab.gone()
-        } else {
-            viewBinding.fab.visible()
-        }
-
-        when (fabType) {
-            ProjectListFAB.NEW -> {
-                viewBinding.fab.text = "Thêm"
-            }
-
-            ProjectListFAB.PROPOSED -> {
-                viewBinding.fab.text = "Đề xuất"
-            }
-
-            null -> {
-                viewBinding.fab.gone()
-            }
-        }
     }
 
     private fun openAddProject() {
     }
 
     override val viewModel: ProjectListViewModel by viewModels()
+
+    private fun initFAB() {
+        val fabType = getProjectListFAB(AppState.userRole)
+        println("userRole: ${AppState.userRole} hasInChargeProject: ${AppState.hasInChargeProject}")
+        if (AppState.hasInChargeProject && AppState.userRole == UserRole.RESEARCHER) {
+            viewBinding.fab.gone()
+            viewBinding.fab2.gone()
+        } else {
+            viewBinding.fab.visible()
+            viewBinding.fab2.visible()
+        }
+
+        when (fabType) {
+            ProjectListFAB.NEW -> {
+                viewBinding.fab.text = "Thêm"
+                viewBinding.fab2.text = "Thêm"
+            }
+
+            ProjectListFAB.PROPOSED -> {
+                viewBinding.fab.text = "Đề xuất"
+                viewBinding.fab2.text = "Đề xuất"
+            }
+
+            null -> {
+                viewBinding.fab.gone()
+                viewBinding.fab2.gone()
+            }
+        }
+    }
 
     override fun inflateViewBinding(inflater: LayoutInflater) = FragmentProjectBinding.inflate(inflater)
     override fun initialize() {
@@ -85,6 +92,8 @@ class ProjectListFragment : BaseFragment<FragmentProjectBinding, ProjectListView
         }
 
         viewModel.projects.observe(viewLifecycleOwner) {
+            println("..")
+            initFAB()
             if (it.isNullOrEmpty()) {
                 viewBinding.containerNoInCharge.visible()
                 viewBinding.containerHasInCharge.gone()
@@ -96,6 +105,10 @@ class ProjectListFragment : BaseFragment<FragmentProjectBinding, ProjectListView
         }
 
         viewBinding.fab.setOnClickListener {
+            addFragment(R.id.container, AddFragment.newInstance(1, null), addToBackStack = true)
+        }
+
+        viewBinding.fab2.setOnClickListener {
             addFragment(R.id.container, AddFragment.newInstance(1, null), addToBackStack = true)
         }
 

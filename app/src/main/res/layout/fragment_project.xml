@@ -30,37 +30,63 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/containerNoInCharge"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginStart="@dimen/dp_16"
-                android:layout_marginEnd="@dimen/dp_16"
-                android:gravity="center"
-                android:orientation="vertical"
                 android:visibility="gone"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+                >
 
-                <ImageView
-                    android:layout_width="@dimen/dp_60"
-                    android:layout_height="@dimen/dp_60"
-                    android:src="@drawable/ic_empty" />
+                <LinearLayout
 
-                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/dp_16"
+                    android:layout_marginEnd="@dimen/dp_16"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_60"
+                        android:layout_height="@dimen/dp_60"
+                        android:src="@drawable/ic_empty" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_32"
+                        android:gravity="center"
+                        android:text="No Project here"
+                        android:textSize="@dimen/sp_20"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                    android:id="@+id/fab2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dp_32"
-                    android:gravity="center"
-                    android:text="No Project here"
-                    android:textSize="@dimen/sp_20"
-                    android:textStyle="bold" />
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_gravity="bottom|right"
+                    android:layout_marginEnd="@dimen/dp_32"
+                    android:layout_marginBottom="@dimen/dp_32"
+                    android:backgroundTint="@color/primary"
+                    android:text="New"
+                    android:textColor="@color/black"
+                    app:icon="@drawable/ic_add"
+                    app:iconTint="@color/black"
+                    tools:text="New" />
+            </RelativeLayout>
 
-            </LinearLayout>
+
 
             <RelativeLayout
                 android:id="@+id/containerHasInCharge"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:visibility="visible"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
                 <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
